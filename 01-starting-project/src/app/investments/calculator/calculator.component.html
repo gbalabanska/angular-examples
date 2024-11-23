@@ -1,0 +1,57 @@
+<div class="calculator-container">
+  <form>
+    <div class="input-group">
+      <div class="input-item">
+        <label for="initialInvestment">Initial Investment</label>
+        <input
+          type="number"
+          id="initialInvestment"
+          [(ngModel)]="initialInvestment"
+          name="initialInvestment"
+          placeholder="Enter initial investment"
+          required
+        />
+      </div>
+
+      <div class="input-item">
+        <label for="annualInvestment">Annual Investment</label>
+        <input
+          type="number"
+          id="annualInvestment"
+          [(ngModel)]="annualInvestment"
+          name="annualInvestment"
+          placeholder="Enter annual investment"
+          required
+        />
+      </div>
+    </div>
+
+    <div class="input-group">
+      <div class="input-item">
+        <label for="expectedReturn">Expected Return (%)</label>
+        <input
+          type="number"
+          id="expectedReturn"
+          [(ngModel)]="expectedReturn"
+          name="expectedReturn"
+          placeholder="Enter expected return"
+          required
+        />
+      </div>
+
+      <div class="input-item">
+        <label for="duration">Duration (years)</label>
+        <input
+          type="number"
+          id="duration"
+          [(ngModel)]="duration"
+          name="duration"
+          placeholder="Enter duration"
+          required
+        />
+      </div>
+    </div>
+
+    <button type="button" (click)="onCalculate()">Calculate</button>
+  </form>
+</div>
