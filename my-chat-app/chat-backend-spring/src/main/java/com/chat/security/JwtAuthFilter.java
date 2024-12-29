@@ -28,12 +28,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
-        System.out.println("requestURI===================="+requestURI);
-        // If the request is for /auth/generateToken, bypass token validation
-//        if (requestURI.equals("/auth/generateToken")) {
-//            filterChain.doFilter(request, response);  // Let it pass through without checking for token
-//            return;
-//        }
+        System.out.println("==================== Request URI: " + requestURI + " ====================");
+
         // Retrieve the Authorization header
         String authHeader = request.getHeader("Authorization");
         String token = null;

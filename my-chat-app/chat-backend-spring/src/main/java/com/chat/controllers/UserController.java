@@ -1,12 +1,10 @@
 package com.chat.controllers;
 
 import com.chat.dto.AuthRequest;
-import com.chat.dto.UserInfo;
+import com.chat.entities.User;
 import com.chat.services.JwtService;
 import com.chat.services.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -47,7 +45,7 @@ public class UserController {
 
 
     @PostMapping("/addNewUser")
-    public String addNewUser(@RequestBody UserInfo userInfo) {
+    public String addNewUser(@RequestBody User userInfo) {
         return service.addUser(userInfo);
     }
 
