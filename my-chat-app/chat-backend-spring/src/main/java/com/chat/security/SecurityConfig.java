@@ -45,7 +45,7 @@ public class SecurityConfig {
                 )
                 .authenticationProvider(authenticationProvider()) // Custom authentication provider
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
-        ; // Add JWT filter
+        ;
 
         return http.build();
     }

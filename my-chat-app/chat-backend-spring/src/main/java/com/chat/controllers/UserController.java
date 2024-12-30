@@ -7,13 +7,16 @@ import com.chat.services.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +35,7 @@ public class UserController {
     private AuthenticationManager authenticationManager;
 
     @GetMapping("/welcome")
-    public String welcome(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<Map<String, String>> welcome(@RequestHeader("Authorization") String authorizationHeader) {
         String token = authorizationHeader.replace("Bearer ", "");
 
         // Optionally validate token here
@@ -43,10 +46,11 @@ public class UserController {
         String username = jwtService.extractUsername(token);
         Date expirationDate = jwtService.extractExpiration(token);
 
-        return "Welcome user " + username + ". Your token will expire at " + expirationDate;
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Welcome user " + username + ". Your token will expire at " + expirationDate);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-
 
     @PostMapping("/addNewUser")
     public ResponseEntity<Map<String, String>> addNewUser(@RequestBody User userInfo) {
@@ -59,24 +63,45 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);  // Returns JSON response with HTTP status 200 (OK)
     }
 
-    @GetMapping("/user/userProfile")
-    public String userProfile() {
-        return "Welcome to User Profile";
-    }
-
-    @GetMapping("/admin/adminProfile")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public String adminProfile() {
-        return "Welcome to Admin Profile";
-    }
+//    @PostMapping("/generateToken")
+//    public ResponseEntity<Map<String, String>> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+//        );
+//        if (authentication.isAuthenticated()) {
+//            Map<String, String> response = new HashMap<>();
+//            response.put("token", jwtService.generateToken(authRequest.getUsername()));
+//            return new ResponseEntity<>(response, HttpStatus.OK);  // Returns JSON response with HTTP status 200 (OK)
+//        } else {
+//            throw new UsernameNotFoundException("Invalid user request!");
+//        }
+//    }
 
     @PostMapping("/generateToken")
-    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<Map<String, String>> authenticateAndGetToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
+        // Authenticate the user
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
         );
+
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(authRequest.getUsername());
+            // Generate the JWT token
+            String token = jwtService.generateToken(authRequest.getUsername());
+
+            // Create the cookie with HttpOnly and Secure flags
+            Cookie cookie = new Cookie("token", token);
+            cookie.setHttpOnly(true);  // Makes the cookie inaccessible to JavaScript
+            cookie.setSecure(true);    // Ensures cookie is only sent over HTTPS
+            cookie.setPath("/");       // The cookie is available for all paths on the domain
+            cookie.setMaxAge(24 * 60 * 60); // Expire in 24 hours (adjust as needed)
+
+            // Add the cookie to the response
+            response.addCookie(cookie);
+
+            // Return a success message
+            Map<String, String> responseBody = new HashMap<>();
+            responseBody.put("message", "Authentication successful. Token stored in cookie.");
+            return new ResponseEntity<>(responseBody, HttpStatus.OK);
         } else {
             throw new UsernameNotFoundException("Invalid user request!");
         }
