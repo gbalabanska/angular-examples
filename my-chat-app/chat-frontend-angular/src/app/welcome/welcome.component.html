@@ -1,4 +1,21 @@
-<div>
-  <h2>Welcome</h2>
-  <p>{{ welcomeMessage }}</p>
+<div class="welcome-container">
+  <h1>Welcome to the Application</h1>
+
+  <!-- Button to trigger the welcome message -->
+  <button (click)="getWelcomeMessage()">Welcome me</button>
+
+  <!-- Display the welcome message -->
+  <div *ngIf="welcomeMessage; else loadingMessage">
+    <p>{{ welcomeMessage }}</p>
+  </div>
+
+  <ng-template #loadingMessage>
+    <p>Loading your welcome message...</p>
+  </ng-template>
+
+  <div *ngIf="!welcomeMessage && welcomeMessage !== ''">
+    <p style="color: red">
+      Error: Could not load welcome message. Please check your session.
+    </p>
+  </div>
 </div>

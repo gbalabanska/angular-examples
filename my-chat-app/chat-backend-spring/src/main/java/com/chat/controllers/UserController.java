@@ -12,8 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,15 +34,28 @@ public class UserController {
     private AuthenticationManager authenticationManager;
 
     @GetMapping("/welcome")
-    public ResponseEntity<Map<String, String>> welcome(@RequestHeader("Authorization") String authorizationHeader) {
-        String token = authorizationHeader.replace("Bearer ", "");
+    public ResponseEntity<Map<String, String>> welcome(HttpServletRequest request) {
+        // Retrieve the token from the cookie
+        String token = null;
+        String username = null;
 
-        // Optionally validate token here
-        if (!jwtService.validateToken(token, service.loadUserByUsername(jwtService.extractUsername(token)))) {
-            throw new IllegalArgumentException("Invalid token");
+        // Look for the "token" cookie
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("token".equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    username = jwtService.extractUsername(token);  // Extract username from the token
+                    break;
+                }
+            }
         }
 
-        String username = jwtService.extractUsername(token);
+        if (token == null || !jwtService.validateToken(token, service.loadUserByUsername(username))) {
+            throw new IllegalArgumentException("Invalid or missing token");
+        }
+
+        // Optionally, get expiration date or other token info
         Date expirationDate = jwtService.extractExpiration(token);
 
         Map<String, String> response = new HashMap<>();
@@ -51,6 +63,7 @@ public class UserController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
     @PostMapping("/addNewUser")
     public ResponseEntity<Map<String, String>> addNewUser(@RequestBody User userInfo) {
@@ -62,20 +75,6 @@ public class UserController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);  // Returns JSON response with HTTP status 200 (OK)
     }
-
-//    @PostMapping("/generateToken")
-//    public ResponseEntity<Map<String, String>> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
-//        Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
-//        );
-//        if (authentication.isAuthenticated()) {
-//            Map<String, String> response = new HashMap<>();
-//            response.put("token", jwtService.generateToken(authRequest.getUsername()));
-//            return new ResponseEntity<>(response, HttpStatus.OK);  // Returns JSON response with HTTP status 200 (OK)
-//        } else {
-//            throw new UsernameNotFoundException("Invalid user request!");
-//        }
-//    }
 
     @PostMapping("/generateToken")
     public ResponseEntity<Map<String, String>> authenticateAndGetToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
