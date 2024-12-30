@@ -5,6 +5,8 @@ import com.chat.entities.User;
 import com.chat.services.JwtService;
 import com.chat.services.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +15,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -45,8 +49,14 @@ public class UserController {
 
 
     @PostMapping("/addNewUser")
-    public String addNewUser(@RequestBody User userInfo) {
-        return service.addUser(userInfo);
+    public ResponseEntity<Map<String, String>> addNewUser(@RequestBody User userInfo) {
+        String result = service.addUser(userInfo);  // Assuming addUser returns a success message
+
+        // Create a map to return as JSON response
+        Map<String, String> response = new HashMap<>();
+        response.put("message", result);  // Example: {"message": "User Added"}
+
+        return new ResponseEntity<>(response, HttpStatus.OK);  // Returns JSON response with HTTP status 200 (OK)
     }
 
     @GetMapping("/user/userProfile")

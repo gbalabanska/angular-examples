@@ -34,6 +34,6 @@ public class UserInfoService implements UserDetailsService {
         // Encode password before saving the user
         userInfo.setPassword(encoder.encode(userInfo.getPassword()));
         repository.save(userInfo);
-        return "User Added Successfully";
+        return "User Added Successfully from UserInfoService";
     }
 }
