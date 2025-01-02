@@ -4,29 +4,19 @@
     <div>
       <label for="username">Username:</label>
       <input id="username" formControlName="username" />
-      <div
-        *ngIf="
-          loginForm.get('username')?.invalid &&
-          loginForm.get('username')?.touched
-        "
-      >
-        Username is required.
-      </div>
     </div>
 
     <div>
       <label for="password">Password:</label>
       <input id="password" type="password" formControlName="password" />
-      <div
-        *ngIf="
-          loginForm.get('password')?.invalid &&
-          loginForm.get('password')?.touched
-        "
-      >
-        Password is required.
-      </div>
     </div>
 
     <button type="submit" [disabled]="loginForm.invalid">Login</button>
   </form>
+
+  <!-- Link to Sign Up -->
+  <p>
+    Don't have an account?
+    <a routerLink="/signup">Sign up!</a>
+  </p>
 </div>

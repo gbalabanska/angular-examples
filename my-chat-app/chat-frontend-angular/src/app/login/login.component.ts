@@ -7,11 +7,13 @@ import {
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http'; // Import HttpClient for HTTP requests
 import { FormsModule } from '@angular/forms'; // Import FormsModule
+import { Router } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule], // Import both FormsModule and ReactiveFormsModule
+  imports: [ReactiveFormsModule, FormsModule, RouterLink], // Import both FormsModule and ReactiveFormsModule
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
@@ -20,16 +22,34 @@ export class LoginComponent {
 
   private apiUrl = 'https://localhost:8443'; // Replace with your backend URL
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+    private router: Router
+  ) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required]],
     });
   }
 
+  // Method to remove all cookies
+  removeCookies() {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
+      const cookieName = cookie.split('=')[0].trim();
+      // Set the expiration date to a past date to remove the cookie
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+    }
+  }
+
   // Method to submit the form and send the login request
   onSubmit() {
     if (this.loginForm.valid) {
+      // Remove previous cookies before logging in
+      this.removeCookies();
+
       const username = this.loginForm.value.username;
       const password = this.loginForm.value.password;
 
@@ -51,6 +71,7 @@ export class LoginComponent {
             alert(
               'Login successful! Token has been stored in a secure cookie.'
             );
+            this.router.navigate(['/welcome']);
           },
           error: (error) => {
             // Handle login error (invalid credentials or other issues)

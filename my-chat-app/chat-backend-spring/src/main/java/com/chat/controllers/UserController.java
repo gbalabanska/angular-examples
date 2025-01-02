@@ -55,7 +55,7 @@ public class UserController {
             throw new IllegalArgumentException("Invalid or missing token");
         }
 
-        // Optionally, get expiration date or other token info
+        // Get expiration date or other token info
         Date expirationDate = jwtService.extractExpiration(token);
 
         Map<String, String> response = new HashMap<>();

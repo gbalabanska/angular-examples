@@ -9,7 +9,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://localhost:4200")  // Replace with your Angular frontend URL
+                .allowedOrigins("https://localhost:4200")  // Angular frontend URL
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
                 .allowCredentials(true);  // Allow cookies (credentials) in cross-origin requests

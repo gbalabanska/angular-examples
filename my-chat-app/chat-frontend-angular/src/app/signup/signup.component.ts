@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -19,7 +20,7 @@ export class SignupComponent {
 
   private apiUrl = 'https://localhost:8443/auth/addNewUser'; // Your backend endpoint
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     console.log('created');
   }
 
@@ -29,6 +30,7 @@ export class SignupComponent {
       next: (response) => {
         console.log('User created successfully!');
         alert('Sign up successful!');
+        this.router.navigate(['/login']);
       },
       error: (error) => {
         console.error('There was an error!', error);
