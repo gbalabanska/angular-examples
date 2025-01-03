@@ -9,9 +9,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://localhost:4200")  // Angular frontend URL
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowedHeaders("*")
-                .allowCredentials(true);  // Allow cookies (credentials) in cross-origin requests
+                .allowedOrigins("https://localhost:4200")  // Explicitly allow the frontend URL
+                .allowedMethods("*")  // Allow all HTTP methods
+                .allowedHeaders("*")  // Allow all headers
+                .allowCredentials(true);  // Allow credentials (cookies, etc.)
     }
 }

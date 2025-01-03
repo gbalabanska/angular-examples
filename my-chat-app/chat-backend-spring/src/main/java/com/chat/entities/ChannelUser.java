@@ -1,6 +1,5 @@
 package com.chat.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,17 +12,17 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class ChannelUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String username;
-    @JsonIgnore
-    private String email;
-    @JsonIgnore
-    private String password;
-    @JsonIgnore
-    private String roles;
 
+    private int channelId; // Reference to Channel ID
+
+    private int userId; // Reference to User ID
+
+    private String role; // e.g., OWNER, ADMIN, MEMBER, GUEST
+
+    private boolean isDeleted; // Flag to check if the user is removed from the channel
 }

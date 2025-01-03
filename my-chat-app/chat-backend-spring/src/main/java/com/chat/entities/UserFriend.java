@@ -1,6 +1,5 @@
 package com.chat.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,17 +12,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class UserFriend {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String username;
-    @JsonIgnore
-    private String email;
-    @JsonIgnore
-    private String password;
-    @JsonIgnore
-    private String roles;
 
+    private int userId; // Reference to User ID
+
+    private int friendId; // Reference to Friend User ID
 }

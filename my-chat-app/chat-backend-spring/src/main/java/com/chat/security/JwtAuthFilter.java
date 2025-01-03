@@ -30,7 +30,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         System.out.println("==================== Request URI: " + requestURI + " ====================");
 
-        // Retrieve the token from the cookie
+        // Handle OPTIONS request for CORS preflight
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            System.out.println("==================== OPTIONS REQUEST: " + requestURI + " ====================");
+
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setHeader("Access-Control-Allow-Origin", "https://localhost:4200");  // Adjust based on your frontend's origin
+            response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            response.setHeader("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization, X-Requested-With");
+            response.setHeader("Access-Control-Allow-Credentials", "true");
+            response.setHeader("Access-Control-Max-Age", "3600"); // Cache preflight request for 1 hour
+
+            // End the response here without processing the rest of the filter chain
+            return;
+        }
+
+        // Retrieve the token from the cookie for other request methods
         String token = null;
         String username = null;
 
@@ -41,6 +56,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 if ("token".equals(cookie.getName())) {
                     token = cookie.getValue();
                     username = jwtService.extractUsername(token);  // Extract username from the token
+                    System.out.println("==================== Request came from user: " + username + " ====================");
+
                     break;
                 }
             }
@@ -60,8 +77,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+        System.out.println("==================== Continue the filter chain ====================");
 
-        // Continue the filter chain
+        // Continue the filter chain for non-OPTIONS requests
         filterChain.doFilter(request, response);
     }
+
 }

@@ -4,18 +4,13 @@
   <!-- Button to trigger the welcome message -->
   <button (click)="getWelcomeMessage()">Welcome me</button>
 
-  <!-- Display the welcome message -->
-  <div *ngIf="welcomeMessage; else loadingMessage">
+  @if(welcomeMessage){
+  <div>
     <p>{{ welcomeMessage }}</p>
   </div>
+  }
 
-  <ng-template #loadingMessage>
-    <p>Loading your welcome message...</p>
-  </ng-template>
-
-  <div *ngIf="!welcomeMessage && welcomeMessage !== ''">
-    <p style="color: red">
-      Error: Could not load welcome message. Please check your session.
-    </p>
-  </div>
+  <a routerLink="/addFriend">Add Friend</a>
+  ....
+  <a routerLink="/addChannel">Add Channel</a>
 </div>
