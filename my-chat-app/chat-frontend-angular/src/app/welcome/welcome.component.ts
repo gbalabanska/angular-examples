@@ -2,11 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { AvailableChannelsComponent } from '../available-channels/available-channels.component';
+import { AvailableChatsComponent } from '../available-chats/available-chats.component';
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    FormsModule,
+    RouterLink,
+    AvailableChannelsComponent,
+    AvailableChatsComponent,
+  ],
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.css'],
 })

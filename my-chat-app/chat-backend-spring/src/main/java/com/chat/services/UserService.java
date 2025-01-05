@@ -38,6 +38,7 @@ public class UserService {
 
         return true;
     }
+
     public int getUserIdByUsername(String username) {
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isPresent()) {
@@ -45,7 +46,10 @@ public class UserService {
         }
         throw new IllegalArgumentException("User not found with username: " + username);
     }
+
     public Optional<User> getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
+
 }
