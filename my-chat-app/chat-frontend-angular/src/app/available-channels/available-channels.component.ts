@@ -30,6 +30,7 @@ export class AvailableChannelsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error fetching channels:', error);
+          this.channels = []; // In case of error, set channels to empty array
         },
       });
   }

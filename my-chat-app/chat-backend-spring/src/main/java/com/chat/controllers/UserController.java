@@ -11,7 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -43,28 +46,23 @@ public class UserController {
         }
     }
 
-   @PostMapping("/addFriend/{id}")
-   public ResponseEntity<String> addFriend(@PathVariable int id, HttpServletRequest request) {
+    @PostMapping("/addFriend/{id}")
+    public ResponseEntity<Map<String, String>> addFriend(@PathVariable int id, HttpServletRequest request) {
         // Get the username from the token (extracted from cookies)
-        String username = cookieExtractor.extractUsername(request);
-        System.out.println("----------------- addFriend for user: "+username);
-        // Get the user who is sending the friend request (the user initiating the action)
-        Optional<User> requestingUserOptional = userService.getUserByUsername(username);
+        int userIdRequest = cookieExtractor.extractUserId(request);
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>> addFriend for userId: " + userIdRequest);
 
-        if (!requestingUserOptional.isPresent()) {
-            return ResponseEntity.status(404).body("User not found");
-        }
-
-        User requestingUser = requestingUserOptional.get();
-        int requestingUserId = requestingUser.getId();
+        Map<String, String> response = new HashMap<>();
 
         // Add the friend (add the user with ID `id` to the friend list of the user)
-        boolean isFriendAdded = userService.addFriend(requestingUserId, id);
+        boolean isFriendAdded = userService.addFriend(userIdRequest, id);
 
         if (isFriendAdded) {
-            return ResponseEntity.ok("Friend added successfully");
+            response.put("message", "Friend added successfully!");
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
-            return ResponseEntity.status(400).body("You are already friends with this user");
+            response.put("message", "You are already friends with this user!");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 

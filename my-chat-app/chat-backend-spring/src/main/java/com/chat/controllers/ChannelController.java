@@ -1,8 +1,9 @@
 package com.chat.controllers;
 
-import com.chat.dto.AddFriendsRequest;
 import com.chat.dto.UserChannelDTO;
+import com.chat.dto.friends.AddFriendToChannel;
 import com.chat.entities.Channel;
+import com.chat.reponse.ApiResponse;
 import com.chat.services.ChannelService;
 import com.chat.util.CookieExtractor;
 import jakarta.servlet.http.HttpServletRequest;
@@ -72,22 +73,22 @@ public class ChannelController {
         String newChannelName = requestBody.get("newChannelName");
         Map<String, String> response = new HashMap<>();
 
-        try {
-            // Check if the user is the owner of the channel
-            Channel channel = channelService.getChannelById(channelId);
-            if (channel != null && channel.getOwnerId() == userIdRequest) {
-                channel.setName(newChannelName);
-                channelService.saveChannel(channel);
+        // Check if the user is the owner of the channel
+        Channel channel = channelService.getChannelById(channelId);
+        if (channel != null && channel.getOwnerId() == userIdRequest) {
+            boolean channelIsUpdated = channelService.updateChannelName(channelId, newChannelName);
+            if (channelIsUpdated) {
                 response.put("message", "Channel name updated successfully!");
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
-                response.put("message", "You are not authorized to update this channel.");
-                return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+                response.put("message", "Could not update this channel. The name may be already taken or the channel does not exist.");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
             }
-        } catch (Exception ex) {
-            response.put("message", "Error updating channel name.");
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            response.put("message", "You are not authorized to update this channel.");
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
         }
+
     }
 
     // Delete Channel
@@ -115,29 +116,22 @@ public class ChannelController {
         }
     }
 
-
     @PostMapping("/addFriends/{channelId}")
-    public ResponseEntity<Map<String, String>> addFriendsToChannel(
+    public ResponseEntity<ApiResponse> addFriendsToChannel(
             @PathVariable int channelId,
-            @RequestBody AddFriendsRequest friendsIdToAdd,
+            @RequestBody AddFriendToChannel friendId,
             HttpServletRequest request) {
 
         int userIdRequest = cookieExtractor.extractUserId(request);
-        Map<String, String> response = new HashMap<>();
-        if (channelService.isUserAdminOfChannel(userIdRequest, channelId) ||
-                channelService.isUserOwnerOfChannel(userIdRequest, channelId)) {
-            System.out.println("==================== User is ADMIN or OWNER ====================");
 
-            channelService.addFriendsToChannel(friendsIdToAdd.getFriendsIdtoAddList(), channelId, userIdRequest);
-
-            response.put("message", "Friends were successfully added to the channel!");
-            return new ResponseEntity<>(response, HttpStatus.OK);
+        boolean friendIsAddedToChannel = channelService.addFriendToChannel(friendId.getFriendId(), channelId, userIdRequest);
+        if (friendIsAddedToChannel) {
+            return new ResponseEntity<>(new ApiResponse("Friend was successfully added to the channel!", true), HttpStatus.OK);
         } else {
-            // User is neither ADMIN nor OWNER
-            response.put("message", "You are not authorized to add members to this channel.");
-            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
-        }
+            return new ResponseEntity<>(new ApiResponse("User was not added to the channel!", false), HttpStatus.BAD_REQUEST);
 
+        }
     }
+
 
 }

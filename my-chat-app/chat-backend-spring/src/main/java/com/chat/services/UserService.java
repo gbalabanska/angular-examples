@@ -42,7 +42,7 @@ public class UserService {
     public int getUserIdByUsername(String username) {
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isPresent()) {
-            return user.get().getId();  // Assuming the User entity has an 'id' field
+            return user.get().getId();
         }
         throw new IllegalArgumentException("User not found with username: " + username);
     }

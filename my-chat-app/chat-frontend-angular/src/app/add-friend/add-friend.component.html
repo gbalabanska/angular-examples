@@ -1,25 +1,20 @@
-<div class="add-friend-container">
+<div>
   <!-- Search Section -->
-  <div class="search-section">
+  <div>
     <input
       type="text"
       [(ngModel)]="searchQuery"
       placeholder="Search for a friend"
-      class="search-input"
     />
-    <button
-      (click)="searchUsers()"
-      class="search-button"
-      [disabled]="!searchQuery.trim()"
-    >
+    <button (click)="searchUsers()" [disabled]="!searchQuery.trim()">
       Search
     </button>
   </div>
 
   <!-- Display Found User -->
-  <div *ngIf="foundUser" class="found-user">
+  <div>
     <h3>Found User:</h3>
-    <div class="user-details">
+    <div *ngIf="foundUser">
       <p><strong>Username:</strong> {{ foundUser.username }}</p>
       <!-- Add more user details as needed -->
       <button (click)="addToFriendList(foundUser.id)">Add to Friendlist</button>
@@ -29,12 +24,16 @@
   <!-- Show All Users -->
   <h3>All Users</h3>
   <ul>
-    <li *ngFor="let user of users; trackBy: trackByUserId" class="user-item">
+    <li
+      *ngFor="let user of users; trackBy: trackByUserId"
+      (mouseenter)="isHoveredUserId = user.id"
+      (mouseleave)="isHoveredUserId = null"
+    >
       <span>{{ user.username }}</span>
+      <!-- Add button next to user if the user is hovered -->
       <button
         *ngIf="isHoveredUserId === user.id"
         (click)="addToFriendList(user.id)"
-        class="add-friend-button"
       >
         Add to Friendlist
       </button>

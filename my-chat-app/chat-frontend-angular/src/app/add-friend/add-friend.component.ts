@@ -22,7 +22,6 @@ export class AddFriendComponent {
     this.loadAllUsers();
   }
 
-  // Method to load all users from the API
   loadAllUsers() {
     this.http
       .get<User[]>('https://localhost:8443/api/users', {
@@ -38,7 +37,6 @@ export class AddFriendComponent {
       });
   }
 
-  // Method to search users based on the search query
   searchUsers() {
     if (this.searchQuery.trim()) {
       this.http
@@ -50,43 +48,44 @@ export class AddFriendComponent {
             console.log('found user with username: ' + data.username);
             this.foundUser = data;
           },
-          error: (err) => console.error('Error searching users', err),
+          error: (err) => {
+            if (err.status === 404) {
+              console.log('User not found');
+              this.foundUser = null; // Hide found user if 404
+            } else {
+              console.error('Error searching users', err);
+            }
+          },
         });
     }
   }
 
-  // Method to track by user id
   trackByUserId(index: number, user: User): number {
     return user.id;
   }
 
-  // Method to add a user to the friend list
   addToFriendList(userId: number) {
     this.http
       .post(
         `https://localhost:8443/api/users/addFriend/${userId}`,
-        {}, // Empty body, as you're not sending any data here
+        {},
         {
-          withCredentials: true, // Correctly place withCredentials here in the options
+          withCredentials: true,
         }
       )
       .subscribe({
-        next: (response) => {
+        next: (response: any) => {
+          alert(response.message);
           console.log(`User with ID ${userId} added to friend list`);
         },
-        error: (err) => {
-          console.error('Error adding friend', err);
+        error: (err: any) => {
+          if (err.status === 400) {
+            const errorMessage = err.error.message || 'An error occurred';
+            alert(errorMessage); // Alert the user with the message from the server
+          } else {
+            console.error('Error adding friend', err.message);
+          }
         },
       });
-  }
-
-  // Method to show the "Add to Friendlist" option when user hovers
-  showAddFriendOption(user: User) {
-    this.isHoveredUserId = user.id;
-  }
-
-  // Method to hide the "Add to Friendlist" option when user stops hovering
-  hideAddFriendOption() {
-    this.isHoveredUserId = null;
   }
 }

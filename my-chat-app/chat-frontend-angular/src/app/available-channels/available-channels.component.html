@@ -1,4 +1,4 @@
-<div *ngIf="channels.length > 0; else noChannels">
+<div *ngIf="channels && channels.length > 0; else noChannels">
   <ul>
     <li *ngFor="let channel of channels">
       <strong>Channel Name:</strong> {{ channel.channelName }} <br />
