@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { User } from '../../models/user.model';
+import { User } from '../../models/entity/user.model';
 import { CommonModule } from '@angular/common';
 
 @Component({

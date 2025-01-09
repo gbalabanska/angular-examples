@@ -8,4 +8,6 @@ import { Component } from '@angular/core';
   templateUrl: './available-chats.component.html',
   styleUrl: './available-chats.component.css',
 })
-export class AvailableChatsComponent {}
+export class AvailableChatsComponent {
+  // Friends
+}

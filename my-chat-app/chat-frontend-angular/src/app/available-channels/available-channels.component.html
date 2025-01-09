@@ -1,14 +1,13 @@
 <div *ngIf="channels && channels.length > 0; else noChannels">
   <ul>
     <li *ngFor="let channel of channels">
-      <strong>Channel Name:</strong> {{ channel.channelName }} <br />
-      <strong>Role:</strong> {{ channel.role }}
-      <span *ngIf="channel.role === 'OWNER'">
-        <button (click)="deleteChannel(channel.channelId)">Delete</button>
-        <button (click)="changeChannelName(channel.channelId)">
-          Change Name
-        </button>
-      </span>
+      <span>{{ channel.channelId }} / {{ channel.channelName }}</span>
+      <a
+        [routerLink]="['/editChannel']"
+        [queryParams]="{ id: channel.channelId, name: channel.channelName }"
+      >
+        Edit Channel
+      </a>
     </li>
   </ul>
 </div>

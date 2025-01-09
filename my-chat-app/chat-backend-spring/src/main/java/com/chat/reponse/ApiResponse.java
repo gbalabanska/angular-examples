@@ -1,13 +1,22 @@
 package com.chat.reponse;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class ApiResponse {
+public class ApiResponse<T> {
+    private T data;           // Generic type to hold any data (could be a list or single object)
     private String message;
-    private boolean success;
+
+    public ApiResponse() {
+    }
+
+    public ApiResponse(String message) {
+        this.message = message;
+        this.data = null;
+    }
+
+    public ApiResponse(T data, String message) {
+        this.data = data;
+        this.message = message;
+    }
 }

@@ -55,7 +55,6 @@ public class ValidationExceptionHandler {
         if (packageName.startsWith("com.chat.errors")) {
             // Handle custom exceptions from com.chat.errors package
             response.setMessage(ex.getMessage());
-            response.setSuccess(false);
 
             // Customize HTTP status based on exception type or default
             HttpStatus status = getStatusForException(ex);
@@ -63,7 +62,6 @@ public class ValidationExceptionHandler {
         } else {
             // Handle all other exceptions generically
             response.setMessage("An unexpected error occurred.");
-            response.setSuccess(false);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

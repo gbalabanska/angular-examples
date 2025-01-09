@@ -1,0 +1,42 @@
+<div *ngIf="channelId && channelName">
+  <div>
+    <h1>Editing Channel: ID:{{ channelId }} / {{ channelName }}</h1>
+    <button (click)="changeChannelName()">Change Channel Name</button>
+    <button (click)="deleteChannel()">Delete Channel</button>
+  </div>
+
+  <div *ngIf="users$ | async as response">
+    <div class="user-section">
+      <h3>Owner</h3>
+      <div *ngFor="let user of response.data">
+        <div *ngIf="user.userRole === 'OWNER'">
+          <p>
+            <strong>{{ user.username }}</strong>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="user-section">
+      <h3>Admins</h3>
+      <div *ngFor="let user of response.data">
+        <div *ngIf="user.userRole === 'ADMIN'">
+          <p>
+            <strong>{{ user.username }}</strong>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="user-section">
+      <h3>Members</h3>
+      <div *ngFor="let user of response.data">
+        <div *ngIf="user.userRole === 'MEMBER'">
+          <p>
+            <strong>{{ user.username }}</strong>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

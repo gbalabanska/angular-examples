@@ -1,7 +1,9 @@
 package com.chat.controllers;
 
-import com.chat.dto.UserChannelDTO;
 import com.chat.dto.friends.AddFriendToChannel;
+import com.chat.dto.request.UpdateChannelNameRequest;
+import com.chat.dto.response.AvailableChannel;
+import com.chat.dto.response.ChannelUserEdit;
 import com.chat.entities.Channel;
 import com.chat.reponse.ApiResponse;
 import com.chat.services.ChannelService;
@@ -46,73 +48,86 @@ public class ChannelController {
         }
     }
 
-    @GetMapping("/user/channels")
-    public ResponseEntity<Map<String, Object>> getChannelsForUser(HttpServletRequest request) {
-        Map<String, Object> response = new HashMap<>();
+//    @GetMapping("/user/channels")
+//    public ResponseEntity<Map<String, Object>> getChannelsForUser(HttpServletRequest request) {
+//        Map<String, Object> response = new HashMap<>();
+//
+//        int userId = cookieExtractor.extractUserId(request);
+//
+//        // Fetch the channels associated with the user using the service method
+//        List<UserChannelDTO> userChannels = channelService.findChannelsForUser(userId);
+//
+//        // Add the result to the response map
+//        response.put("channels", userChannels);
+//
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
 
+    @GetMapping("/user/channels")
+    public ResponseEntity<ApiResponse<List<AvailableChannel>>> getChannelsForUser(HttpServletRequest request) {
         int userId = cookieExtractor.extractUserId(request);
 
-        // Fetch the channels associated with the user using the service method
-        List<UserChannelDTO> userChannels = channelService.findChannelsForUser(userId);
-
-        // Add the result to the response map
-        response.put("channels", userChannels);
+        // Fetch channels associated with the user using the service method
+        List<AvailableChannel> availableChannels = channelService.findChannelsForUser(userId);
+        if (availableChannels == null) {
+//todo: return neshto drugo
+        }
+        // Wrap the data in the ApiResponse
+        ApiResponse<List<AvailableChannel>> response = new ApiResponse<>(
+                availableChannels,
+                "Channels fetched successfully"
+        );
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
     // Update Channel Name
-    @PostMapping("/update/{channelId}")
-    public ResponseEntity<Map<String, String>> updateChannelName(
+    @PostMapping("/update-name/{channelId}")
+    public ResponseEntity<ApiResponse<Void>> updateChannelName(
             @PathVariable int channelId,
-            @RequestBody Map<String, String> requestBody,
+            @RequestBody UpdateChannelNameRequest newChannelNameRequest,
             HttpServletRequest request) {
 
         int userIdRequest = cookieExtractor.extractUserId(request);
-        String newChannelName = requestBody.get("newChannelName");
-        Map<String, String> response = new HashMap<>();
+        String newChannelName = newChannelNameRequest.getNewChannelName();
 
         // Check if the user is the owner of the channel
         Channel channel = channelService.getChannelById(channelId);
         if (channel != null && channel.getOwnerId() == userIdRequest) {
             boolean channelIsUpdated = channelService.updateChannelName(channelId, newChannelName);
             if (channelIsUpdated) {
-                response.put("message", "Channel name updated successfully!");
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                return ResponseEntity.ok(new ApiResponse<>("Channel name updated successfully!"));
             } else {
-                response.put("message", "Could not update this channel. The name may be already taken or the channel does not exist.");
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest()
+                        .body(new ApiResponse<>("Could not update this channel. The name may be already taken or the channel does not exist."));
             }
         } else {
-            response.put("message", "You are not authorized to update this channel.");
-            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ApiResponse<>("You are not authorized to update this channel."));
         }
-
     }
+
 
     // Delete Channel
     @DeleteMapping("/delete/{channelId}")
-    public ResponseEntity<Map<String, String>> deleteChannel(
+    public ResponseEntity<ApiResponse<Void>> deleteChannel(
             @PathVariable int channelId,
             HttpServletRequest request) {
 
         int userIdRequest = cookieExtractor.extractUserId(request);
-        Map<String, String> response = new HashMap<>();
 
         // Check if the user is the owner of the channel
         Channel channel = channelService.getChannelById(channelId);
         if (channel != null && channel.getOwnerId() == userIdRequest) {
             if (channelService.deleteChannel(channelId)) {
-                response.put("message", "Channel deleted successfully!");
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                return ResponseEntity.ok(new ApiResponse<>("Channel deleted successfully!"));
             } else {
-                response.put("message", "Channel was already deleted!");
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body(new ApiResponse<>("Channel was already deleted!"));
             }
         } else {
-            response.put("message", "You are not authorized to delete this channel.");
-            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ApiResponse<>("You are not authorized to delete this channel."));
         }
     }
 
@@ -126,12 +141,24 @@ public class ChannelController {
 
         boolean friendIsAddedToChannel = channelService.addFriendToChannel(friendId.getFriendId(), channelId, userIdRequest);
         if (friendIsAddedToChannel) {
-            return new ResponseEntity<>(new ApiResponse("Friend was successfully added to the channel!", true), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse("Friend was successfully added to the channel!"), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new ApiResponse("User was not added to the channel!", false), HttpStatus.BAD_REQUEST);
-
+            return new ResponseEntity<>(new ApiResponse("User was not added to the channel!"), HttpStatus.BAD_REQUEST);
         }
     }
 
+    @GetMapping("/users/{channelId}")
+    public ResponseEntity<ApiResponse<List<ChannelUserEdit>>> getActiveChannelUsers(@PathVariable int channelId) {
+        List<ChannelUserEdit> channelUsers = channelService.getChannelUsers(channelId);
+        ApiResponse<List<ChannelUserEdit>> response = new ApiResponse<>(channelUsers, "Channel users were successfully fetched");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("name/{channelId}")
+    public ResponseEntity<ApiResponse<String>> getChannelName(@PathVariable int channelId) {
+        String channelName = channelService.getChannelNameById(channelId);
+        ApiResponse<String> response = new ApiResponse<>(channelName, "Channel name.");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 }

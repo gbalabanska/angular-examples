@@ -1,8 +1,10 @@
 package com.chat.services;
 
-import com.chat.dto.UserChannelDTO;
+import com.chat.dto.response.AvailableChannel;
+import com.chat.dto.response.ChannelUserEdit;
 import com.chat.entities.Channel;
 import com.chat.entities.ChannelUser;
+import com.chat.entities.User;
 import com.chat.errors.*;
 import com.chat.repositories.ChannelRepository;
 import com.chat.repositories.ChannelUserRepository;
@@ -23,7 +25,6 @@ public class ChannelService {
     ChannelRepository channelRepository;
     @Autowired
     ChannelUserRepository channelUserRepository;
-
     @Autowired
     UserFriendRepository userFriendRepository;
 
@@ -58,11 +59,17 @@ public class ChannelService {
     }
 
 
-    public Channel getChannelById(int id) {
-        Optional<Channel> channel = channelRepository.findById(id);
-        return channel.orElse(null);
+    public Channel getChannelById(int channelId) {
+        Optional<Channel> channel = channelRepository.findById(channelId);
+        if (channel.isEmpty()) {
+            throw new ChannelNotFoundException();
+        }
+        return channel.get();
     }
 
+    public String getChannelNameById(int channelId) {
+        return getChannelById(channelId).getName();
+    }
 
     public boolean deleteChannel(int channelId) {
         Channel channel = channelRepository.findById(channelId).orElse(null);
@@ -81,26 +88,24 @@ public class ChannelService {
         return false;
     }
 
-    public List<UserChannelDTO> findChannelsForUser(int id) {
+    public List<AvailableChannel> findChannelsForUser(int id) {
         List<ChannelUser> userChannels = channelUserRepository.findByUserIdAndIsChannelDeletedFalseAndIsUserRemovedFalse(id);
-        for (ChannelUser cuu : userChannels) {
-            System.out.println("___________cuu=" + cuu.toString());
-        }
         if (userChannels.isEmpty()) {
             return null;
         }
-        List<UserChannelDTO> userChannelInfoList = new ArrayList<>();
+        List<AvailableChannel> availableChannels = new ArrayList<>();
         for (ChannelUser channelUser : userChannels) {
-            UserChannelDTO userChannelDTO = new UserChannelDTO();
-            userChannelDTO.setRole(channelUser.getRole());
-            userChannelDTO.setChannelId(channelUser.getChannelId());
+            AvailableChannel availableChannel = new AvailableChannel();
+            availableChannel.setChannelId(channelUser.getChannelId());
             Channel channel = channelRepository.findById(channelUser.getChannelId()).orElse(null);
             String channelName = channel == null ? "" : channel.getName();
-            userChannelDTO.setChannelName(channelName);
-            userChannelInfoList.add(userChannelDTO);
-            System.out.println(">>>>>>>>>>>>>>>>>>>> userChannelDTO=" + userChannelDTO.toString());
+            if (channelName == null || channelName.equals("")) {
+                throw new ChannelNotFoundException();
+            }
+            availableChannel.setChannelName(channelName);
+            availableChannels.add(availableChannel);
         }
-        return userChannelInfoList;
+        return availableChannels;
     }
 
     public boolean addFriendToChannel(int friendId, int channelId, int userId) {
@@ -120,8 +125,8 @@ public class ChannelService {
         }
 
         //todo: check if users are friends
-        if(!(userFriendRepository.existsByUserIdAndFriendId(friendId, userId)
-                || userFriendRepository.existsByUserIdAndFriendId(userId, friendId))){
+        if (!(userFriendRepository.existsByUserIdAndFriendId(friendId, userId)
+                || userFriendRepository.existsByUserIdAndFriendId(userId, friendId))) {
             throw new UsersAreNotFriendsException();
         }
 
@@ -176,5 +181,26 @@ public class ChannelService {
         return false;
     }
 
+    public List<ChannelUserEdit> getChannelUsers(int channelId) {
+
+        channelRepository.findByIdAndIsDeletedFalse(channelId)
+                .orElseThrow(ChannelNotFoundException::new);
+
+        List<ChannelUserEdit> activeChannelUsersForUpdate = new ArrayList<>();
+
+        for (ChannelUser activeChannelUser : channelUserRepository.getActiveUsersOfChannel(channelId)) {
+            ChannelUserEdit channelUserEdit = new ChannelUserEdit();
+            channelUserEdit.setUserId(activeChannelUser.getUserId());
+            channelUserEdit.setUserRole(activeChannelUser.getRole());
+            //find username
+            Optional<User> user = userRepository.findById(activeChannelUser.getUserId());
+            if (user.isPresent()) {
+                channelUserEdit.setUsername(user.get().getUsername());
+            }
+            activeChannelUsersForUpdate.add(channelUserEdit);
+        }
+
+        return activeChannelUsersForUpdate;
+    }
 
 }
