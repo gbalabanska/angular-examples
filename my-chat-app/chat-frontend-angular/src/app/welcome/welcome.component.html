@@ -1,6 +1,14 @@
 <div class="welcome-container">
   <h1>Welcome to the Application</h1>
+  <!-- welcome.component.html -->
+  <div *ngIf="username && userId">
+    <p>Welcome, {{ username }} (ID: {{ userId }})</p>
+  </div>
+  <div *ngIf="!username || !userId">
+    <p>Loading user information...</p>
+  </div>
 
+  <button (click)="logout()">Logout</button>
   <!-- Button to trigger the welcome message -->
   <button (click)="getWelcomeMessage()">Welcome me</button>
 

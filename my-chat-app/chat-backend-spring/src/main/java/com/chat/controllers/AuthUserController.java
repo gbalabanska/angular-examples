@@ -3,8 +3,14 @@ package com.chat.controllers;
 import com.chat.dto.AddNewUserRequest;
 import com.chat.dto.AuthRequest;
 import com.chat.entities.User;
+import com.chat.reponse.ApiResponse;
 import com.chat.services.JwtService;
 import com.chat.services.UserInfoService;
+import com.chat.util.CookieExtractor;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import jakarta.servlet.http.*;
-import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +36,18 @@ public class AuthUserController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    CookieExtractor cookieExtractor;
+
+    @GetMapping("/currentUser")
+    public ResponseEntity<Map<String, Object>> getCurrentUser(HttpServletRequest request) {
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("userId", cookieExtractor.extractUserId(request));
+        response.put("username", cookieExtractor.extractUsername(request));
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @GetMapping("/welcome")
     public ResponseEntity<Map<String, String>> welcome(HttpServletRequest request) {
@@ -66,7 +80,7 @@ public class AuthUserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//TODO: da ne se pozvolqwa potrebitel sus sushiq USERNAME!!!!!
+    //TODO: da ne se pozvolqwa potrebitel sus sushiq USERNAME!!!!!
     @PostMapping("/addNewUser")
     public ResponseEntity<Map<String, String>> addNewUser(@Valid @RequestBody AddNewUserRequest newUserDTO) {
         // Form new user from DTO
@@ -100,7 +114,7 @@ public class AuthUserController {
             cookie.setHttpOnly(true);  // Makes the cookie inaccessible to JavaScript
             cookie.setSecure(true);    // Ensures cookie is only sent over HTTPS
             cookie.setPath("/");       // The cookie is available for all paths on the domain
-            cookie.setMaxAge(24 * 60 * 60); // Expire in 24 hours (adjust as needed)
+            cookie.setMaxAge(30 * 60); // Expire in 30min
 
             // Add the cookie to the response
             response.addCookie(cookie);
@@ -114,4 +128,18 @@ public class AuthUserController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<String>> logout(HttpServletResponse response) {
+        // Create a cookie with the same name as your JWT cookie
+        Cookie cookie = new Cookie("token", null); // Set value to null to clear it
+        cookie.setHttpOnly(true);                  // Ensure HttpOnly is set
+        cookie.setSecure(true);                    // Ensure Secure is set
+        cookie.setPath("/");                       // Match the original path
+        cookie.setMaxAge(0);                       // Set cookie to expire immediately
+        response.addCookie(cookie);                // Add the expired cookie to the response
+
+        // Create a success response using the unified ApiResponse
+        ApiResponse<String> apiResponse = new ApiResponse<>("You have been logged out successfully.");
+        return ResponseEntity.ok(apiResponse);
+    }
 }

@@ -4,6 +4,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ChannelService } from '../services/channel.service';
+import { Friend } from '../../models/dto/friend.model';
+import { FriendService } from '../services/friend.service';
 
 @Component({
   selector: 'app-edit-channel',
@@ -16,24 +18,33 @@ export class EditChannelComponent implements OnInit {
   channelId!: number;
   channelName!: string;
   users$: Observable<any> | undefined; // Observable to hold the users' data
+  friendList: Friend[] = []; // Store friend list
 
   constructor(
     private route: ActivatedRoute,
     private channelService: ChannelService,
-    private router: Router // Inject the Router service
+    private friendService: FriendService, // Inject FriendService
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    // Retrieve both 'id' and 'name' from query parameters
+    // Retrieve channel information
     this.route.queryParamMap.subscribe((queryParams) => {
-      this.channelId = +queryParams.get('id')!; // Convert to number
-      this.channelName = queryParams.get('name')!; // Get the name (if exists)
+      this.channelId = +queryParams.get('id')!;
+      this.channelName = queryParams.get('name')!;
 
-      console.log('Editing channel with ID:', this.channelId);
-      console.log('Channel Name:', this.channelName);
-
-      // Fetch the channel users data from the API
+      // Fetch the channel users data
       this.users$ = this.channelService.getChannelUsers(this.channelId);
+
+      // Fetch the friend list using FriendService
+      this.friendService.getFriendList().subscribe({
+        next: (response) => {
+          this.friendList = response.data || []; // Store friend list
+        },
+        error: (error) => {
+          console.error('Error fetching friend list:', error);
+        },
+      });
     });
   }
 
@@ -50,6 +61,19 @@ export class EditChannelComponent implements OnInit {
         },
       });
     }
+  }
+
+  addFriendToChannel(friendId: number): void {
+    // Call the API to add the friend to the channel
+    this.channelService.addFriendToChannel(this.channelId, friendId).subscribe({
+      next: (response) => {
+        alert(response.message); // Display success message
+        this.users$ = this.channelService.getChannelUsers(this.channelId);
+      },
+      error: (error) => {
+        alert('Error adding friend to channel: ' + error.error.message); // Display error message
+      },
+    });
   }
 
   // Method to delete the channel

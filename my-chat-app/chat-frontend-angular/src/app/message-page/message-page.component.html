@@ -1,0 +1,18 @@
+<div class="message-container">
+  <div class="messages">
+    <div
+      *ngFor="let message of messages"
+      [ngClass]="{ 'my-message': message.senderId === currentUserId }"
+    >
+      <div class="message-text">{{ message.messageText }}</div>
+      <div class="message-time">{{ message.createdAt }}</div>
+    </div>
+  </div>
+
+  <textarea
+    [(ngModel)]="newMessage"
+    placeholder="Type your message..."
+    rows="4"
+  ></textarea>
+  <button (click)="sendMessage()">Send</button>
+</div>

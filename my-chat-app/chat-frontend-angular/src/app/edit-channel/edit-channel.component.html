@@ -5,13 +5,28 @@
     <button (click)="deleteChannel()">Delete Channel</button>
   </div>
 
+  <div class="friend-list">
+    <h3>Friends</h3>
+    <div *ngFor="let friend of friendList">
+      <div class="friend-item">
+        <span>{{ friend.friendId }} / {{ friend.friendUsername }}</span>
+        <button
+          (click)="addFriendToChannel(friend.friendId)"
+          class="add-friend-btn"
+        >
+          Add Friend to Channel
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div *ngIf="users$ | async as response">
     <div class="user-section">
       <h3>Owner</h3>
       <div *ngFor="let user of response.data">
         <div *ngIf="user.userRole === 'OWNER'">
           <p>
-            <strong>{{ user.username }}</strong>
+            <strong>{{ user.userId }} / {{ user.username }}</strong>
           </p>
         </div>
       </div>
@@ -22,7 +37,7 @@
       <div *ngFor="let user of response.data">
         <div *ngIf="user.userRole === 'ADMIN'">
           <p>
-            <strong>{{ user.username }}</strong>
+            <strong>{{ user.userId }} / {{ user.username }}</strong>
           </p>
         </div>
       </div>
@@ -33,7 +48,7 @@
       <div *ngFor="let user of response.data">
         <div *ngIf="user.userRole === 'MEMBER'">
           <p>
-            <strong>{{ user.username }}</strong>
+            <strong>{{ user.userId }} / {{ user.username }}</strong>
           </p>
         </div>
       </div>

@@ -1,1 +1,35 @@
-<p>available-chats works!</p>
+<div class="friend-list-container">
+  <h2>Friend List</h2>
+  <table class="friend-list-table">
+    <thead>
+      <tr>
+        <th>Friend ID</th>
+        <th>Username</th>
+      </tr>
+    </thead>
+    <table>
+      <thead>
+        <tr>
+          <th>Friend ID</th>
+          <th>Username</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let friend of friendList"
+          (click)="goToChat(friend.friendId)"
+          style="cursor: pointer"
+        >
+          <td>{{ friend.friendId }}</td>
+          <td>{{ friend.friendUsername }}</td>
+          <td>
+            <button class="chat-button">Start Chat</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </table>
+</div>
+
+<!-- You can add CSS styles to make it look better -->

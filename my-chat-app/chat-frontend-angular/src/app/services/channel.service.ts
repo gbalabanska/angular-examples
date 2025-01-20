@@ -44,6 +44,21 @@ export class ChannelService {
       );
   }
 
+  // Add a method to add friends to a channel
+  addFriendToChannel(
+    channelId: number,
+    friendId: number
+  ): Observable<ApiResponse<null>> {
+    const requestBody = { friendId }; // The request body containing friendId
+    return this.http.post<ApiResponse<null>>(
+      `${this.baseUrl}/addFriends/${channelId}`,
+      requestBody,
+      {
+        withCredentials: true, // Ensures cookies/auth headers are sent with the request
+      }
+    );
+  }
+
   // Call API to delete a channel
   deleteChannel(channelId: number): Observable<ApiResponse<null>> {
     return this.http.delete<ApiResponse<null>>(

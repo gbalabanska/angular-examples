@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import java.time.LocalDateTime;
 @Entity
 @Data
 @AllArgsConstructor
@@ -20,11 +20,11 @@ public class Message {
 
     private int senderId; // Reference to the sender user
 
-    private Integer receiverId; // Reference to the receiver user, nullable for channel messages
+    private int receiverId; // Reference to the receiver user, nullable for channel messages
 
-    private Integer channelId; // Reference to the channel (nullable for direct messages)
+    private int channelId; // Reference to the channel (nullable for direct messages)
 
     private String messageText; // The content of the message
 
-    private String createdAt; // Timestamp for when the message was sent
+    private LocalDateTime createdAt; // Change this from String to LocalDateTime
 }

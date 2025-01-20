@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AvailableChannelsComponent } from '../available-channels/available-channels.component';
 import { AvailableChatsComponent } from '../available-chats/available-chats.component';
+import { environment } from '../environment/environment';
+import { AuthService } from '../services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     FormsModule,
     RouterLink,
@@ -20,12 +24,32 @@ import { AvailableChatsComponent } from '../available-chats/available-chats.comp
 })
 export class WelcomeComponent implements OnInit {
   welcomeMessage: string = '';
+  userId: number | null = null;
+  username: string | null = null;
   apiUrl: string = 'https://localhost:8443/auth/welcome'; // Backend endpoint
+  logoutUrl: string = environment.apiUrl + '/auth/logout';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-    // Optionally, you can call getWelcomeMessage on initialization or leave it to the button click
+    // Fetch current user details when the component is initialized
+    this.authService.getCurrentUser().subscribe({
+      next: (response) => {
+        this.userId = response.userId;
+        this.username = response.username;
+        // Store user info in sessionStorage
+        if (this.userId && this.username) {
+          this.authService.saveUserInfo(this.userId, this.username);
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching user data:', error);
+      },
+    });
   }
 
   // Method to get the welcome message from the backend
@@ -44,6 +68,29 @@ export class WelcomeComponent implements OnInit {
         console.error('Error:', error);
         this.welcomeMessage =
           'Failed to load welcome message. Please check your session.';
+      },
+    });
+  }
+
+  // Method to log out the user
+  logout() {
+    this.http.post(this.logoutUrl, {}, { withCredentials: true }).subscribe({
+      next: (response: any) => {
+        console.log(response.message);
+        alert(response.message);
+
+        // Clear user data from sessionStorage
+        this.authService.clearUserInfo();
+
+        // Optionally clear other session data
+        sessionStorage.clear(); // This removes all session data
+
+        // Redirect to the login page
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        console.error('Logout failed:', error);
+        alert('Failed to log out. Please try again.');
       },
     });
   }
