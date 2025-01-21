@@ -28,4 +28,8 @@ public interface ChannelUserRepository extends JpaRepository<ChannelUser, Intege
     // get active users of channel
     @Query(value = "SELECT * FROM channel_user cu WHERE cu.channel_id = :channelId AND cu.is_user_removed = false", nativeQuery = true)
     List<ChannelUser> getActiveUsersOfChannel(@Param("channelId") int channelId);
+
+    @Query(value = "SELECT * FROM channel_user cu WHERE cu.channel_id = :channelId AND cu.user_id = :userId AND cu.is_channel_deleted = false AND cu.is_user_removed = false LIMIT 1", nativeQuery = true)
+    Optional<ChannelUser> findActiveChannelUserByChannelAndUser(@Param("channelId") int channelId, @Param("userId") int userId);
+
 }

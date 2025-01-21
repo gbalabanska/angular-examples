@@ -8,6 +8,12 @@
       >
         Edit Channel
       </a>
+      <button
+        [routerLink]="['/chatChannel']"
+        [queryParams]="{ id: channel.channelId }"
+      >
+        Chat
+      </button>
     </li>
   </ul>
 </div>

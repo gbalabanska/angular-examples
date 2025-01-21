@@ -22,6 +22,6 @@ public class ChannelUser {
 
     private String role; // e.g., OWNER, ADMIN, MEMBER, GUEST
 
-    private boolean isChannelDeleted = false; // Flag to check if the user is removed from the channel
-    private boolean isUserRemoved = false;
+    private boolean isChannelDeleted = false;
+    private boolean isUserRemoved = false; // Flag to check if the user is removed from the channel
 }

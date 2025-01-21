@@ -14,6 +14,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/messages")
 public class MessageController {
+/*
+INSERT INTO message (sender_id, receiver_id, channel_id, message_text, created_at)
+VALUES (35, 36, 0, 'Hey thereqqqqqqqq! How are you?', '2025-01-20 10:00:00');
+ */
 
     @Autowired
     private MessageService messageService;

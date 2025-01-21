@@ -1,0 +1,54 @@
+<div
+  *ngFor="let message of messages"
+  [ngClass]="{ 'my-message': message.senderId === loggedInUserId }"
+>
+  <p>{{ message.messageText }}</p>
+  <small>{{ message.createdAt | date : "short" }}</small>
+</div>
+
+<input
+  [(ngModel)]="newMessageText"
+  type="text"
+  placeholder="Type a message..."
+  class="message-input"
+/>
+<button (click)="sendMessage()">Send</button>
+
+<style>
+  .my-message {
+    text-align: right;
+    background-color: lightgreen;
+    margin: 10px 0;
+    padding: 5px;
+    border-radius: 5px;
+  }
+
+  div {
+    text-align: left;
+    background-color: lightgray;
+    margin: 10px 0;
+    padding: 5px;
+    border-radius: 5px;
+  }
+
+  .message-input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+  button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+
+  button:hover {
+    background-color: #45a049;
+  }
+</style>

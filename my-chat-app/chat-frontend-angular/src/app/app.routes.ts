@@ -6,6 +6,7 @@ import { AddFriendComponent } from './add-friend/add-friend.component';
 import { AddChannelComponent } from './add-channel/add-channel.component';
 import { EditChannelComponent } from './edit-channel/edit-channel.component';
 import { MessagePageComponent } from './message-page/message-page.component';
+import { ChatChannelComponent } from './chat-channel/chat-channel.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -16,4 +17,5 @@ export const routes: Routes = [
   { path: 'addChannel', component: AddChannelComponent },
   { path: 'editChannel', component: EditChannelComponent },
   { path: 'chat/:friendId', component: MessagePageComponent },
+  { path: 'chatChannel', component: ChatChannelComponent },
 ];
