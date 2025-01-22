@@ -48,31 +48,13 @@ public class ChannelController {
         }
     }
 
-//    @GetMapping("/user/channels")
-//    public ResponseEntity<Map<String, Object>> getChannelsForUser(HttpServletRequest request) {
-//        Map<String, Object> response = new HashMap<>();
-//
-//        int userId = cookieExtractor.extractUserId(request);
-//
-//        // Fetch the channels associated with the user using the service method
-//        List<UserChannelDTO> userChannels = channelService.findChannelsForUser(userId);
-//
-//        // Add the result to the response map
-//        response.put("channels", userChannels);
-//
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
-
     @GetMapping("/user/channels")
     public ResponseEntity<ApiResponse<List<AvailableChannel>>> getChannelsForUser(HttpServletRequest request) {
         int userId = cookieExtractor.extractUserId(request);
 
         // Fetch channels associated with the user using the service method
         List<AvailableChannel> availableChannels = channelService.findChannelsForUser(userId);
-        if (availableChannels == null) {
-//todo: return neshto drugo
-        }
-        // Wrap the data in the ApiResponse
+
         ApiResponse<List<AvailableChannel>> response = new ApiResponse<>(
                 availableChannels,
                 "Channels fetched successfully"

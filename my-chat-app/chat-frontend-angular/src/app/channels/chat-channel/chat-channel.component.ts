@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Message } from '../../models/entity/entities.model';
+import { Message } from '../../../models/entity/entities.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MessageService } from '../services/messages.service';
+import { MessageService } from '../../services/messages.service';
 
 @Component({
   selector: 'app-chat-channel',
@@ -24,7 +24,7 @@ export class ChatChannelComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private messageService: MessageService // Inject MessageService
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {

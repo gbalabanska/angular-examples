@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { ChannelService } from '../services/channel.service';
-import { Friend } from '../../models/dto/friend.model';
-import { FriendService } from '../services/friend.service';
+import { Friend } from '../../../models/dto/friend.model';
+import { ChannelService } from '../../services/channel.service';
+import { FriendService } from '../../services/friend.service';
 
 @Component({
   selector: 'app-edit-channel',
@@ -17,13 +17,13 @@ import { FriendService } from '../services/friend.service';
 export class EditChannelComponent implements OnInit {
   channelId!: number;
   channelName!: string;
-  users$: Observable<any> | undefined; // Observable to hold the users' data
-  friendList: Friend[] = []; // Store friend list
+  users$: Observable<any> | undefined;
+  friendList: Friend[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private channelService: ChannelService,
-    private friendService: FriendService, // Inject FriendService
+    private friendService: FriendService,
     private router: Router
   ) {}
 
@@ -49,25 +49,24 @@ export class EditChannelComponent implements OnInit {
   }
 
   changeChannelName(): void {
-    const newName = prompt('Enter the new channel name:', this.channelName); // Prompt for new name
+    const newName = prompt('Enter the new channel name:', this.channelName);
     if (newName && newName !== this.channelName) {
       this.channelService.updateChannelName(this.channelId, newName).subscribe({
         next: (response) => {
-          alert(response.message); // Show success message
-          this.channelName = newName; // Update local channelName
+          alert(response.message);
+          this.channelName = newName;
         },
         error: (error) => {
-          alert('Error updating channel name: ' + error.error.message); // Show error message
+          alert('Error updating channel name: ' + error.error.message);
         },
       });
     }
   }
 
   addFriendToChannel(friendId: number): void {
-    // Call the API to add the friend to the channel
     this.channelService.addFriendToChannel(this.channelId, friendId).subscribe({
       next: (response) => {
-        alert(response.message); // Display success message
+        alert(response.message);
         this.users$ = this.channelService.getChannelUsers(this.channelId);
       },
       error: (error) => {
@@ -76,16 +75,15 @@ export class EditChannelComponent implements OnInit {
     });
   }
 
-  // Method to delete the channel
   deleteChannel(): void {
     if (confirm('Are you sure you want to delete this channel?')) {
       this.channelService.deleteChannel(this.channelId).subscribe({
         next: (response) => {
-          alert(response.message); // Display the response message
+          alert(response.message);
           this.router.navigate(['/welcome']);
         },
         error: (error) => {
-          alert('Error deleting channel: ' + error.error.message); // Display error message
+          alert('Error deleting channel: ' + error.error.message);
         },
       });
     }

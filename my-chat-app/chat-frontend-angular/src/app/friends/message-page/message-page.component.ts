@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Message } from '../../models/entity/entities.model';
-import { MessageService } from '../services/messages.service';
 import { FormsModule } from '@angular/forms';
+import { Message } from '../../../models/entity/entities.model';
+import { MessageService } from '../../services/messages.service';
 
 @Component({
   selector: 'app-message-page',
@@ -16,8 +16,8 @@ export class MessagePageComponent implements OnInit, OnDestroy {
   messages: Message[] = [];
   newMessage: string = '';
   friendId!: number;
-  currentUserId: number | null = null; // Store the current user ID
-  private pollingInterval: any = null; // Store the interval reference for polling
+  currentUserId: number | null = null;
+  private pollingInterval: any = null; // Store the interval reference for checking for updates
 
   constructor(
     private messageService: MessageService,
@@ -40,7 +40,7 @@ export class MessagePageComponent implements OnInit, OnDestroy {
     this.startPolling();
   }
 
-  // Load messages from the backend
+  // Load messages between two friends
   loadMessages(friendId: number): void {
     this.messageService.getMessages(friendId).subscribe((messages) => {
       this.messages = messages;
@@ -51,12 +51,12 @@ export class MessagePageComponent implements OnInit, OnDestroy {
   sendMessage(): void {
     if (this.friendId && this.newMessage.trim()) {
       const message: Message = {
-        id: 0, // Assuming the backend auto-generates the ID
+        id: 0, // Backend auto-generates the ID
         senderId: this.currentUserId!, // Use current user ID
         receiverId: this.friendId,
-        channelId: null, // Assuming it's a direct message
+        channelId: null, // Direct message
         messageText: this.newMessage,
-        createdAt: new Date().toISOString(), // Use current timestamp in ISO format
+        createdAt: new Date().toISOString(), // Current timestamp in ISO format
       };
 
       this.messageService.sendMessage(message).subscribe(() => {

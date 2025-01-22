@@ -8,7 +8,7 @@ import { Message } from '../../models/entity/entities.model';
   providedIn: 'root',
 })
 export class MessageService {
-  private baseUrl = environment.apiUrl + '/api/messages'; // Use apiUrl from environment
+  private baseUrl = environment.apiUrl + '/api/messages';
   private baseUrlChatChannel = environment.apiUrl + '/api/chat-channel';
 
   constructor(private http: HttpClient) {}
@@ -16,14 +16,14 @@ export class MessageService {
   // Get messages between current user and friend
   getMessages(friendId: number): Observable<Message[]> {
     return this.http.get<Message[]>(`${this.baseUrl}?friendId=${friendId}`, {
-      withCredentials: true, // Include credentials in the request
+      withCredentials: true,
     });
   }
 
   // Send a new message to friend
   sendMessage(message: Message): Observable<any> {
     return this.http.post(this.baseUrl, message, {
-      withCredentials: true, // Include credentials in the request
+      withCredentials: true,
     });
   }
 
@@ -32,7 +32,7 @@ export class MessageService {
     return this.http.get<Message[]>(
       `${this.baseUrlChatChannel}/${channelId}/messages`,
       {
-        withCredentials: true, // Include credentials in the request
+        withCredentials: true,
       }
     );
   }
@@ -43,7 +43,7 @@ export class MessageService {
       `${this.baseUrlChatChannel}/${channelId}/messages`,
       message,
       {
-        withCredentials: true, // Include credentials in the request
+        withCredentials: true,
       }
     );
   }

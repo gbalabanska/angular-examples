@@ -48,6 +48,5 @@ public class CookieExtractor {
             throw new IllegalArgumentException("Username not found in token");
         }
 
-        // Use the UserService to get the user by username
-        return userService.getUserIdByUsername(username);  // Assuming getUserIdByUsername is implemented in UserService
+        return userService.getUserIdByUsername(username);
     }}

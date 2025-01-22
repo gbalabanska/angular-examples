@@ -50,11 +50,9 @@ public class UserController {
     public ResponseEntity<Map<String, String>> addFriend(@PathVariable int id, HttpServletRequest request) {
         // Get the username from the token (extracted from cookies)
         int userIdRequest = cookieExtractor.extractUserId(request);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>> addFriend for userId: " + userIdRequest);
 
         Map<String, String> response = new HashMap<>();
 
-        // Add the friend (add the user with ID `id` to the friend list of the user)
         boolean isFriendAdded = userService.addFriend(userIdRequest, id);
 
         if (isFriendAdded) {

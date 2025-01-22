@@ -23,7 +23,7 @@ VALUES (35, 36, 0, 'Hey thereqqqqqqqq! How are you?', '2025-01-20 10:00:00');
     private MessageService messageService;
 
     @Autowired
-    private CookieExtractor cookieExtractor;  // Inject CookieExtractor
+    private CookieExtractor cookieExtractor;
 
     // Get all messages between current user and friend
     @GetMapping
@@ -46,15 +46,12 @@ VALUES (35, 36, 0, 'Hey thereqqqqqqqq! How are you?', '2025-01-20 10:00:00');
     // Send a new message
     @PostMapping
     public ResponseEntity<Message> sendMessage(@RequestBody Message message, HttpServletRequest request) {
-
-        // Get userId from JWT token using CookieExtractor
         int userId = cookieExtractor.extractUserId(request);
 
         if (userId == 0) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // Set senderId from the JWT token
         message.setSenderId(userId);
 
         // Save the message

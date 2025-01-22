@@ -35,7 +35,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             System.out.println("==================== OPTIONS REQUEST: " + requestURI + " ====================");
 
             response.setStatus(HttpServletResponse.SC_OK);
-            response.setHeader("Access-Control-Allow-Origin", "https://localhost:4200");  // Adjust based on your frontend's origin
+            response.setHeader("Access-Control-Allow-Origin", "https://localhost:4200");
             response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
             response.setHeader("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization, X-Requested-With");
             response.setHeader("Access-Control-Allow-Credentials", "true");
@@ -45,7 +45,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Retrieve the token from the cookie for other request methods
         String token = null;
         String username = null;
 

@@ -49,6 +49,7 @@ public class AuthUserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // Endpoint for testing purposes only
     @GetMapping("/welcome")
     public ResponseEntity<Map<String, String>> welcome(HttpServletRequest request) {
         // Retrieve the token from the cookie
@@ -71,7 +72,6 @@ public class AuthUserController {
             throw new IllegalArgumentException("Invalid or missing token");
         }
 
-        // Get expiration date or other token info
         Date expirationDate = jwtService.extractExpiration(token);
 
         Map<String, String> response = new HashMap<>();
@@ -114,7 +114,7 @@ public class AuthUserController {
             cookie.setHttpOnly(true);  // Makes the cookie inaccessible to JavaScript
             cookie.setSecure(true);    // Ensures cookie is only sent over HTTPS
             cookie.setPath("/");       // The cookie is available for all paths on the domain
-            cookie.setMaxAge(30 * 60); // Expire in 30min
+            cookie.setMaxAge(60 * 60); // Expire in 60min
 
             // Add the cookie to the response
             response.addCookie(cookie);
@@ -130,7 +130,7 @@ public class AuthUserController {
 
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<String>> logout(HttpServletResponse response) {
-        // Create a cookie with the same name as your JWT cookie
+        // Create a cookie with the same name as the JWT cookie
         Cookie cookie = new Cookie("token", null); // Set value to null to clear it
         cookie.setHttpOnly(true);                  // Ensure HttpOnly is set
         cookie.setSecure(true);                    // Ensure Secure is set
@@ -138,7 +138,6 @@ public class AuthUserController {
         cookie.setMaxAge(0);                       // Set cookie to expire immediately
         response.addCookie(cookie);                // Add the expired cookie to the response
 
-        // Create a success response using the unified ApiResponse
         ApiResponse<String> apiResponse = new ApiResponse<>("You have been logged out successfully.");
         return ResponseEntity.ok(apiResponse);
     }

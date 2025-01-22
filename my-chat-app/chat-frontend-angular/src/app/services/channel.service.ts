@@ -3,14 +3,34 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { ChannelUserEdit } from '../../models/dto/channel-user-edit.model';
 import { ApiResponse } from '../../models/reponse/api-response.model';
+import { environment } from '../environment/environment';
+import { Channel } from '../../models/entity/channel.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChannelService {
-  private readonly baseUrl: string = 'https://localhost:8443/api/channels';
+  private readonly channelBaseUrl = environment.apiUrl + '/api/channels';
 
   constructor(private http: HttpClient) {}
+
+  createChannel(channelName: string): Observable<any> {
+    return this.http.post(
+      `${this.channelBaseUrl}/create/${channelName}`,
+      {},
+      { withCredentials: true }
+    );
+  }
+
+  // Fetch available channels for the user
+  getCurrentUserChannels(): Observable<ApiResponse<Channel[]>> {
+    return this.http.get<ApiResponse<Channel[]>>(
+      `${this.channelBaseUrl}/user/channels`,
+      {
+        withCredentials: true,
+      }
+    );
+  }
 
   // Update channel name
   updateChannelName(
@@ -19,21 +39,21 @@ export class ChannelService {
   ): Observable<ApiResponse<void>> {
     const requestBody = { newChannelName };
     return this.http.post<ApiResponse<void>>(
-      `${this.baseUrl}/update-name/${channelId}`,
+      `${this.channelBaseUrl}/update-name/${channelId}`,
       requestBody,
       {
-        withCredentials: true, // Send credentials (cookies, auth headers)
+        withCredentials: true,
       }
     );
   }
 
-  // Call API to fetch users in the channel
+  // Call API to fetch member users in the channel
   getChannelUsers(channelId: number): Observable<any> {
     return this.http
       .get<ApiResponse<ChannelUserEdit[]>>(
-        `${this.baseUrl}/users/${channelId}`,
+        `${this.channelBaseUrl}/users/${channelId}`,
         {
-          withCredentials: true, // Send credentials (cookies, auth headers)
+          withCredentials: true,
         }
       )
       .pipe(
@@ -51,18 +71,17 @@ export class ChannelService {
   ): Observable<ApiResponse<null>> {
     const requestBody = { friendId }; // The request body containing friendId
     return this.http.post<ApiResponse<null>>(
-      `${this.baseUrl}/addFriends/${channelId}`,
+      `${this.channelBaseUrl}/addFriends/${channelId}`,
       requestBody,
       {
-        withCredentials: true, // Ensures cookies/auth headers are sent with the request
+        withCredentials: true,
       }
     );
   }
 
-  // Call API to delete a channel
   deleteChannel(channelId: number): Observable<ApiResponse<null>> {
     return this.http.delete<ApiResponse<null>>(
-      `${this.baseUrl}/delete/${channelId}`,
+      `${this.channelBaseUrl}/delete/${channelId}`,
       {
         withCredentials: true,
       }

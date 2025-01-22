@@ -32,8 +32,7 @@ public class ValidationExceptionHandler {
             errors.put(error.getField(), error.getDefaultMessage());
         }
 
-        // Log the validation errors
-        logger.error("Validation failed: {}", errors);
+        logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>> Validation failed: {}", errors);
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
@@ -53,21 +52,17 @@ public class ValidationExceptionHandler {
 
         // Handle exceptions based on the package name dynamically
         if (packageName.startsWith("com.chat.errors")) {
-            // Handle custom exceptions from com.chat.errors package
             response.setMessage(ex.getMessage());
-
-            // Customize HTTP status based on exception type or default
             HttpStatus status = getStatusForException(ex);
+
             return new ResponseEntity<>(response, status);
         } else {
-            // Handle all other exceptions generically
             response.setMessage("An unexpected error occurred.");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     private HttpStatus getStatusForException(Exception ex) {
-        // You can add specific logic for HTTP status based on exception type
         if (ex instanceof ChannelNotFoundException) {
             return HttpStatus.NOT_FOUND;
         } else if (ex instanceof UserNotFoundException) {

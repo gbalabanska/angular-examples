@@ -1,6 +1,6 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http'; // Import provideHttpClient
+import { provideHttpClient } from '@angular/common/http'; // Import provideHttpClient
 
 import { routes } from './app.routes';
 

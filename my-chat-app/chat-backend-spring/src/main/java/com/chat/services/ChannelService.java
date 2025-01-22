@@ -124,7 +124,6 @@ public class ChannelService {
             throw new ChannelPermissionException();
         }
 
-        //todo: check if users are friends
         if (!(userFriendRepository.existsByUserIdAndFriendId(friendId, userId)
                 || userFriendRepository.existsByUserIdAndFriendId(userId, friendId))) {
             throw new UsersAreNotFriendsException();
@@ -146,24 +145,7 @@ public class ChannelService {
         return true;
     }
 
-
-    //todo: da moje da se iztriqt hora ot daden chanel
-//    public boolean removeUserFromChannel(List<Integer> friendIdsList, int channelId, int userId){
-//        for(int id: friendIdsList){
-//            ChannelUser channelUser = channelUserRepository.findByUserId(id);
-//            ChannelUser channelUser = new ChannelUser();
-//            channelUser.setUserId(userId);
-//            channelUser.setChannelId(channelId);
-//            channelUser.setRole("MEMBER");
-//            channelUserRepository.save(channelUser);
-//        }
-//
-//        return true;
-//    }
-
-
     public boolean isUserOwnerOfChannel(int userId, int channelId) {
-        System.out.println("-------------------------------------------------------channel id=" + channelId + " userid=" + userId);
         Optional<Channel> channel = channelRepository.findByIdAndIsDeletedFalse(channelId);
         System.out.println("channel.toString()=" + channel.toString());
         if (channel.isPresent()) {
