@@ -80,22 +80,19 @@ public class AuthUserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //TODO: da ne se pozvolqwa potrebitel sus sushiq USERNAME!!!!!
     @PostMapping("/addNewUser")
-    public ResponseEntity<Map<String, String>> addNewUser(@Valid @RequestBody AddNewUserRequest newUserDTO) {
-        // Form new user from DTO
+    public ResponseEntity<ApiResponse<Void>> addNewUser(@Valid @RequestBody AddNewUserRequest newUserDTO) {
         User newUser = new User();
         newUser.setUsername(newUserDTO.getUsername());
         newUser.setPassword(newUserDTO.getPassword());
         newUser.setRoles("ROLE_USER");
 
+        // Call the service to add user
         String result = service.addUser(newUser);
 
-        // Create a map to return as JSON response
-        Map<String, String> response = new HashMap<>();
-        response.put("message", result);  // Example: {"message": "User Added"}
-
-        return new ResponseEntity<>(response, HttpStatus.OK);  // Returns JSON response with HTTP status 200 (OK)
+        // Return a successful response
+        ApiResponse<Void> response = new ApiResponse<>(null, result);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/generateToken")

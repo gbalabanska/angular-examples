@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-signup',
@@ -17,24 +18,25 @@ export class SignupComponent {
     email: '',
     roles: 'ROLE_USER', // Fixed role
   };
-
-  private apiUrl = 'https://localhost:8443/auth/addNewUser'; // Your backend endpoint
-
-  constructor(private http: HttpClient, private router: Router) {
-    console.log('created');
-  }
+  constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
-    // Send POST request to the backend
-    this.http.post(this.apiUrl, this.user).subscribe({
+    // Call the signup service to send the POST request
+    this.authService.signup(this.user).subscribe({
       next: (response) => {
         console.log('User created successfully!');
         alert('Sign up successful!');
         this.router.navigate(['/login']);
       },
-      error: (error) => {
+      error: (error: HttpErrorResponse) => {
         console.error('There was an error!', error);
-        alert('Sign up failed!');
+
+        // Check if the error is a 400 Bad Request and handle it
+        if (error.status === 400) {
+          alert('User with this username already exists.');
+        } else {
+          alert('Sign up failed!');
+        }
       },
       complete: () => {
         console.log('Request completed');

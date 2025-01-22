@@ -73,6 +73,8 @@ public class ValidationExceptionHandler {
             return HttpStatus.BAD_REQUEST;
         } else if(ex instanceof UsersAreNotFriendsException){
             return HttpStatus.BAD_REQUEST;
+        } else if(ex instanceof UserAlreadyExists){
+            return HttpStatus.BAD_REQUEST;
         }
         return HttpStatus.INTERNAL_SERVER_ERROR; // Default status
     }

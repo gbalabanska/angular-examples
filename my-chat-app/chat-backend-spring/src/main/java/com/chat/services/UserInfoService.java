@@ -2,6 +2,7 @@ package com.chat.services;
 
 import com.chat.dto.*;
 import com.chat.entities.User;
+import com.chat.errors.UserAlreadyExists;
 import com.chat.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,6 +32,12 @@ public class UserInfoService implements UserDetailsService {
     }
 
     public String addUser(User userInfo) {
+        Optional<User> user = repository.findByUsername(userInfo.getUsername());
+        if (user.isPresent()) {
+            // Throwing custom exception when user already exists
+            throw new UserAlreadyExists("User with username " + userInfo.getUsername() + " already exists.");
+        }
+
         // Encode password before saving the user
         userInfo.setPassword(encoder.encode(userInfo.getPassword()));
         repository.save(userInfo);

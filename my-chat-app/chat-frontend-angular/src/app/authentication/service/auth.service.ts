@@ -7,9 +7,21 @@ import { environment } from '../../environment/environment';
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = environment.apiUrl + '/auth'; // Use apiUrl from environment
+  private baseUrl = environment.apiUrl + '/auth';
 
   constructor(private http: HttpClient) {}
+
+  // Register new user
+  signup(user: {
+    username: string;
+    password: string;
+    email: string;
+    roles: string;
+  }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/addNewUser`, user, {
+      withCredentials: true,
+    });
+  }
 
   // Method to send the login request
   login(username: string, password: string): Observable<any> {
@@ -40,10 +52,4 @@ export class AuthService {
     sessionStorage.setItem('userId', userId.toString());
     sessionStorage.setItem('username', username);
   }
-
-  // Clear user info from sessionStorage
-  // clearUserInfo(): void {
-  //   sessionStorage.removeItem('userId');
-  //   sessionStorage.removeItem('username');
-  // }
 }
