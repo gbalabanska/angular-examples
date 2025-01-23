@@ -44,18 +44,29 @@ public class ChannelService {
         return savedChannel;
     }
 
-    public boolean updateChannelName(int channelId, String newChannelName) {
+    public void updateChannelName(int channelId, int userIdRequest, String newChannelName) {
+        Optional<Channel> channelOpt = channelRepository.findByIdAndIsDeletedFalse(channelId);
+        if (!channelOpt.isPresent()) {
+            throw new ChannelNotFoundException("Channel not found with id: " + channelId);
+        }
+        Channel channel = channelOpt.get();
+
+        // Check if the user has the necessary role (OWNER or ADMIN) in the channel
+        Optional<ChannelUser> channelUserOpt = channelUserRepository.findActiveChannelUserByChannelAndUser(channelId, userIdRequest);
+        if (!channelUserOpt.isPresent()) {
+            throw new ChannelPermissionException("You are not part of this channel.");
+        }
+        ChannelUser channelUser = channelUserOpt.get();
+        if (!(channelUser.getRole().equals("OWNER") || channelUser.getRole().equals("ADMIN"))) {
+            throw new ChannelPermissionException("You don't have permission to update the channel name.");
+        }
+
         if (channelRepository.existsByName(newChannelName)) {
-            return false; // Channel name is already taken
+            throw new ChannelPermissionException("The channel name is already taken.");
         }
-        Optional<Channel> channel = channelRepository.findByIdAndIsDeletedFalse(channelId);
-        if (channel.isPresent()) {
-            Channel existingChannel = channel.get();
-            existingChannel.setName(newChannelName);
-            channelRepository.save(existingChannel);
-            return true;
-        }
-        return false;
+
+        channel.setName(newChannelName);
+        channelRepository.save(channel);
     }
 
 
@@ -184,5 +195,51 @@ public class ChannelService {
 
         return activeChannelUsersForUpdate;
     }
+
+
+    public void promoteUserToAdmin(int channelId, int loggedInUserId, int userIdToPromote) {
+
+        // Check if the logged-in user is the owner of the channel
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new ChannelNotFoundException("Channel with ID " + channelId + " not found."));
+
+        if (channel.getOwnerId() != loggedInUserId) {
+            throw new ChannelPermissionException("Only the owner of the channel can promote members to admin.");
+        }
+
+        // Find the channel user to promote
+        ChannelUser userToPromote = channelUserRepository.findActiveChannelUserByChannelAndUser(channelId, userIdToPromote)
+                .orElseThrow(() -> new UserNotFoundException("The user to promote was not found in the channel."));
+
+        // Promote the user
+        userToPromote.setRole("ADMIN");
+        channelUserRepository.save(userToPromote);
+    }
+
+    public void removeUserFromChannel(int channelId, int userId, int loggedInUserId) {
+        // Fetch the channel from the repository or throw an exception if not found
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new ChannelNotFoundException());
+
+        // Verify if the logged-in user is the channel owner
+        if (channel.getOwnerId() != loggedInUserId) {
+            throw new ChannelPermissionException("Only the channel owner can remove users.");
+        }
+
+        // Check if the user is a member of the channel or throw an exception
+        ChannelUser userToRemove = channelUserRepository.findActiveChannelUserByChannelAndUser(channelId, userId)
+                .orElseThrow(() -> new UserNotFoundException("User is not a member of this channel."));
+
+        // Prevent the removal of the channel owner
+        if (channel.getOwnerId() == userId) {
+            throw new ChannelPermissionException("The channel owner cannot be removed.");
+        }
+
+        // FOR SOFT DELETE
+        userToRemove.setUserRemoved(true);
+        channelUserRepository.save(userToRemove);
+
+    }
+
 
 }

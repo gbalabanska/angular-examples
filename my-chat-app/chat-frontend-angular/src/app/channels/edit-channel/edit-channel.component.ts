@@ -88,4 +88,36 @@ export class EditChannelComponent implements OnInit {
       });
     }
   }
+
+  promoteToAdmin(userIdToPromote: number): void {
+    this.channelService
+      .promoteUserToAdmin(this.channelId, userIdToPromote)
+      .subscribe({
+        next: (response) => {
+          alert(response.message);
+          this.users$ = this.channelService.getChannelUsers(this.channelId); // Refresh the users list
+        },
+        error: (error) => {
+          alert('Error promoting user to admin: ' + error.error.message);
+        },
+      });
+  }
+
+  removeUser(userIdToRemove: number): void {
+    if (
+      confirm('Are you sure you want to remove this user from the channel?')
+    ) {
+      this.channelService
+        .removeUserFromChannel(this.channelId, userIdToRemove)
+        .subscribe({
+          next: (response) => {
+            alert(response.message);
+            this.users$ = this.channelService.getChannelUsers(this.channelId); // Refresh the user list
+          },
+          error: (error) => {
+            alert('Error removing user from channel: ' + error.error.message);
+          },
+        });
+    }
+  }
 }

@@ -85,12 +85,11 @@ public class AuthUserController {
         User newUser = new User();
         newUser.setUsername(newUserDTO.getUsername());
         newUser.setPassword(newUserDTO.getPassword());
+        newUser.setEmail(newUserDTO.getUsername() + "@email.com");
         newUser.setRoles("ROLE_USER");
 
-        // Call the service to add user
         String result = service.addUser(newUser);
 
-        // Return a successful response
         ApiResponse<Void> response = new ApiResponse<>(null, result);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

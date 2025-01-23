@@ -41,12 +41,23 @@ public class CookieExtractor {
         return username;
     }
 
-    // Method to find user ID from username
     public int extractUserId(HttpServletRequest request) {
-        String username = extractUsername(request);  // Extract the username
+        String username = extractUsername(request);
         if (username == null) {
             throw new IllegalArgumentException("Username not found in token");
         }
-
         return userService.getUserIdByUsername(username);
-    }}
+    }
+
+    public String extractToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("token".equals(cookie.getName())) {
+                    return cookie.getValue(); // Return the token
+                }
+            }
+        }
+        return null;  // Return null if no token is found
+    }
+}

@@ -38,6 +38,7 @@
         <div *ngIf="user.userRole === 'ADMIN'">
           <p>
             <strong>{{ user.userId }} / {{ user.username }}</strong>
+            <button (click)="removeUser(user.userId)">Remove</button>
           </p>
         </div>
       </div>
@@ -49,6 +50,10 @@
         <div *ngIf="user.userRole === 'MEMBER'">
           <p>
             <strong>{{ user.userId }} / {{ user.username }}</strong>
+            <button (click)="promoteToAdmin(user.userId)">
+              Promote to Admin
+            </button>
+            <button (click)="removeUser(user.userId)">Remove</button>
           </p>
         </div>
       </div>

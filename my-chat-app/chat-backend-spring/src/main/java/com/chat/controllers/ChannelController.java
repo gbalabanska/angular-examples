@@ -1,7 +1,6 @@
 package com.chat.controllers;
 
 import com.chat.dto.friends.AddFriendToChannel;
-import com.chat.dto.request.UpdateChannelNameRequest;
 import com.chat.dto.response.AvailableChannel;
 import com.chat.dto.response.ChannelUserEdit;
 import com.chat.entities.Channel;
@@ -65,29 +64,17 @@ public class ChannelController {
 
 
     // Update Channel Name
-    @PostMapping("/update-name/{channelId}")
+    @PostMapping("/update-name/{channelId}/{newChannelName}")
     public ResponseEntity<ApiResponse<Void>> updateChannelName(
             @PathVariable int channelId,
-            @RequestBody UpdateChannelNameRequest newChannelNameRequest,
+            @PathVariable String newChannelName,
             HttpServletRequest request) {
 
         int userIdRequest = cookieExtractor.extractUserId(request);
-        String newChannelName = newChannelNameRequest.getNewChannelName();
 
-        // Check if the user is the owner of the channel
-        Channel channel = channelService.getChannelById(channelId);
-        if (channel != null && channel.getOwnerId() == userIdRequest) {
-            boolean channelIsUpdated = channelService.updateChannelName(channelId, newChannelName);
-            if (channelIsUpdated) {
-                return ResponseEntity.ok(new ApiResponse<>("Channel name updated successfully!"));
-            } else {
-                return ResponseEntity.badRequest()
-                        .body(new ApiResponse<>("Could not update this channel. The name may be already taken or the channel does not exist."));
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ApiResponse<>("You are not authorized to update this channel."));
-        }
+        channelService.updateChannelName(channelId, userIdRequest, newChannelName);
+
+        return ResponseEntity.ok(new ApiResponse<>("Channel name updated successfully!"));
     }
 
 
@@ -142,5 +129,30 @@ public class ChannelController {
         ApiResponse<String> response = new ApiResponse<>(channelName, "Channel name.");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    //promote channel user to an admin
+    @PostMapping("/promote")
+    public ResponseEntity<ApiResponse<Void>> promoteUserToAdmin(
+            @RequestParam int channelId,
+            @RequestParam int userIdToPromote,
+            HttpServletRequest request) {
+
+        int loggedInUserId = cookieExtractor.extractUserId(request);
+
+        channelService.promoteUserToAdmin(channelId, loggedInUserId, userIdToPromote);
+
+        return ResponseEntity.ok(new ApiResponse<>("User promoted to admin successfully!"));
+    }
+
+    @DeleteMapping("/remove-user/{channelId}/{userIdToRemove}")
+    public ResponseEntity<ApiResponse<Void>> removeUserFromChannel(
+            @PathVariable int channelId,
+            @PathVariable int userIdToRemove,
+            HttpServletRequest request) {
+        int loggedInUserId = cookieExtractor.extractUserId(request);
+        channelService.removeUserFromChannel(channelId, userIdToRemove, loggedInUserId);
+        return ResponseEntity.ok(new ApiResponse<>(null, "User removed from the channel successfully."));
+    }
+
 
 }

@@ -37,10 +37,9 @@ export class ChannelService {
     channelId: number,
     newChannelName: string
   ): Observable<ApiResponse<void>> {
-    const requestBody = { newChannelName };
     return this.http.post<ApiResponse<void>>(
-      `${this.channelBaseUrl}/update-name/${channelId}`,
-      requestBody,
+      `${this.channelBaseUrl}/update-name/${channelId}/${newChannelName}`,
+      {}, // No body
       {
         withCredentials: true,
       }
@@ -85,6 +84,28 @@ export class ChannelService {
       {
         withCredentials: true,
       }
+    );
+  }
+
+  promoteUserToAdmin(
+    channelId: number,
+    userIdToPromote: number
+  ): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(
+      `${this.channelBaseUrl}/promote?channelId=${channelId}&userIdToPromote=${userIdToPromote}`,
+      {},
+      { withCredentials: true }
+    );
+  }
+
+  // channel.service.ts
+  removeUserFromChannel(
+    channelId: number,
+    userIdToRemove: number
+  ): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(
+      `${this.channelBaseUrl}/remove-user/${channelId}/${userIdToRemove}`,
+      { withCredentials: true }
     );
   }
 }
