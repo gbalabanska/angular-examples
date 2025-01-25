@@ -1,1 +1,22 @@
-/* You can add global styles to this file, and also import other style files */
+  /* styles.css */
+:root {
+    --g-purple: #3c2d83;
+    --g-orange: #ee7f54;
+    --g-grey: #e8e8e8;
+  }
+
+html, body {
+    height: 100%; /* Ensure full height */
+    margin: 0;
+    background-color: var(--g-grey); /* Apply g-grey background color */
+  }
+
+  /* Global scrollbar styles */
+* {
+    /* Set a universal base for scrollbars */
+    scrollbar-width: thin; 
+    scrollbar-color: var(--g-orange) white 
+  }
+  
+
+  

@@ -132,4 +132,4 @@ INSERT INTO message (sender_Id, receiver_Id, channel_Id, message_Text, created_A
     (6, 0, 2, 'Nema problem!', '2014-06-15 11:00:00'); -- Radka in Study Group
 
 
-
+--TODO: longer messages chats

@@ -1,26 +1,153 @@
-<div class="welcome-container">
-  <h1>Welcome to the Application</h1>
-
-  <div *ngIf="username && userId">
-    <p>Welcome, {{ username }} (ID: {{ userId }})</p>
+<div class="welcome-wrapper">
+  <div class="welcome-header">
+    <h1>🎉 Welcome to the Application</h1>
+    <img src="chees2.JPG" alt="Logo" class="logo" />
   </div>
-  <div *ngIf="!username || !userId">
-    <p>Loading user information...</p>
+  <div *ngIf="username && userId" class="user-info">
+    <p>👤 Welcome, {{ username }} (ID: {{ userId }})</p>
   </div>
-
+  <div *ngIf="!username || !userId" class="loading-info">
+    <p>⏳ Loading user information...</p>
+  </div>
   <app-logout></app-logout>
-
-  <button (click)="getWelcomeMessage()">Welcome me</button>
-
-  @if(welcomeMessage){
-  <div>
+  <button (click)="getWelcomeMessage()" class="btn-welcome">
+    🌟 JWT Token Check
+  </button>
+  <div class="links-container">
+    <a routerLink="/addFriend" class="link">➕ Add Friend</a>
+    <a routerLink="/addChannel" class="link">🔧 Add Channel</a>
+  </div>
+  <div *ngIf="welcomeMessage" class="welcome-message">
     <p>{{ welcomeMessage }}</p>
   </div>
+  <div class="tabs">
+    <div
+      class="tab"
+      [class.active]="selectedTab === 'channels'"
+      (click)="selectTab('channels')"
+    >
+      📂 Channels
+    </div>
+    <div
+      class="tab"
+      [class.active]="selectedTab === 'chats'"
+      (click)="selectTab('chats')"
+    >
+      💬 Friends
+    </div>
+  </div>
+  <div *ngIf="selectedTab === 'channels'">
+    <app-available-channels></app-available-channels>
+  </div>
+  <div *ngIf="selectedTab === 'chats'">
+    <app-available-chats></app-available-chats>
+  </div>
+</div>
+<style>
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--g-grey); /* Background using g-grey */
   }
 
-  <a routerLink="/addFriend">Add Friend</a>
-  ....
-  <a routerLink="/addChannel">Add Channel</a>
-  <app-available-channels></app-available-channels>
-  <app-available-chats></app-available-chats>
-</div>
+  .welcome-wrapper {
+    max-width: 600px;
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    background-color: white;
+  }
+
+  .welcome-header {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    justify-content: center; /* Center items horizontally */
+    gap: 1rem; /* Add space between the logo and heading */
+    background-color: var(--g-purple); /* Use g-purple for background */
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  .welcome-header h1 {
+    color: white;
+    margin: 0;
+    font-size: 1.5rem; /* Adjust font size for balance */
+  }
+
+  .welcome-header .logo {
+    width: 50px; /* Set width for the logo */
+    height: 50px; /* Set height for the logo */
+    border-radius: 50%; /* Make the logo circular */
+    object-fit: cover; /* Ensure the image scales properly */
+    border: 2px solid white; /* Optional: Add a white border for contrast */
+  }
+
+  .user-info,
+  .loading-info {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+  }
+
+  .welcome-message {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    color: var(--g-purple);
+  }
+
+  .links-container {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .link {
+    background-color: var(--g-purple);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    font-size: 1rem;
+  }
+
+  .link:hover {
+    background-color: #2b2262; /* Slightly darker purple for hover */
+  }
+
+  /* Tab Styles */
+  .tabs {
+    display: flex;
+    margin-top: 1.5rem;
+    border-bottom: 2px solid var(--g-grey);
+  }
+
+  .tab {
+    margin-right: 20px;
+    padding: 1rem 2rem;
+    cursor: pointer;
+    font-size: 1.2rem;
+    text-align: center;
+    border-radius: 5px 5px 0 0;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
+  }
+
+  .tab:hover {
+    background-color: #f3f4f6; /* Light grey on hover */
+    transform: scale(1.05); /* Slight scaling effect */
+  }
+
+  .tab.active {
+    background-color: #3c2d83; /* Dark purple background */
+    color: white;
+    transform: scale(1.1); /* Highlight active tab with scaling */
+  }
+
+  .tab:not(.active) {
+    color: #555; /* Dark grey for inactive tabs */
+  }
+</style>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FriendService } from '../services/friend.service';
-import { Friend } from '../../models/dto/friend.model';
+import { FriendService } from '../../services/friend.service';
+import { Friend } from '../../../models/dto/friend.model';
 import { Router } from '@angular/router';
 
 @Component({
