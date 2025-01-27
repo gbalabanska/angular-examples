@@ -55,11 +55,12 @@ export class WelcomeComponent implements OnInit {
   }
 
   // Just for testing purposes
-  getWelcomeMessage() {
+  getTokenInfo() {
     this.http.get(this.apiUrl, { withCredentials: true }).subscribe({
       next: (response: any) => {
         console.log('Backend response:', response);
         this.welcomeMessage = response.message || 'Welcome!';
+        alert(this.welcomeMessage);
       },
       error: (error) => {
         console.error('Error:', error);

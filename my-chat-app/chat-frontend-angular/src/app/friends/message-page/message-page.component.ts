@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+  AfterViewChecked,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Message } from '../../../models/entity/entities.model';
@@ -12,12 +19,18 @@ import { MessageService } from '../../services/messages.service';
   templateUrl: './message-page.component.html',
   styleUrls: ['./message-page.component.css'],
 })
-export class MessagePageComponent implements OnInit, OnDestroy {
+export class MessagePageComponent
+  implements OnInit, OnDestroy, AfterViewChecked
+{
   messages: Message[] = [];
   newMessage: string = '';
   friendId!: number;
   currentUserId: number | null = null;
   private pollingInterval: any = null; // Store the interval reference for checking for updates
+
+  @ViewChild('messageContainer') private messageContainer!: ElementRef;
+
+  private shouldScrollToBottom = false; // Flag to determine if we need to scroll
 
   constructor(
     private messageService: MessageService,
@@ -40,10 +53,19 @@ export class MessagePageComponent implements OnInit, OnDestroy {
     this.startPolling();
   }
 
+  ngAfterViewChecked(): void {
+    // Scroll to bottom if flagged
+    if (this.shouldScrollToBottom) {
+      this.scrollToBottom();
+      this.shouldScrollToBottom = false; // Reset the flag
+    }
+  }
+
   // Load messages between two friends
   loadMessages(friendId: number): void {
     this.messageService.getMessages(friendId).subscribe((messages) => {
       this.messages = messages;
+      this.shouldScrollToBottom = true; // Flag to scroll to bottom
     });
   }
 
@@ -70,13 +92,21 @@ export class MessagePageComponent implements OnInit, OnDestroy {
   startPolling(): void {
     this.pollingInterval = setInterval(() => {
       this.loadMessages(this.friendId); // Reload messages to check for new ones
-    }, 5000); // Poll every 5 seconds
+    }, 50000); // Poll every 5 seconds
   }
 
   // Stop polling when the component is destroyed
   ngOnDestroy(): void {
     if (this.pollingInterval) {
       clearInterval(this.pollingInterval); // Clear the interval to stop polling
+    }
+  }
+
+  // Scroll to the bottom of the message container
+  scrollToBottom(): void {
+    if (this.messageContainer) {
+      const container = this.messageContainer.nativeElement;
+      container.scrollTop = container.scrollHeight;
     }
   }
 }

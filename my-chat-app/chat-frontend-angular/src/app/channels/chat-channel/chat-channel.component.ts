@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+  AfterViewChecked,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Message } from '../../../models/entity/entities.model';
 import { CommonModule } from '@angular/common';
@@ -12,15 +19,17 @@ import { MessageService } from '../../services/messages.service';
   styleUrls: ['./chat-channel.component.css'],
   standalone: true,
 })
-export class ChatChannelComponent implements OnInit, OnDestroy {
+export class ChatChannelComponent
+  implements OnInit, OnDestroy, AfterViewChecked
+{
+  @ViewChild('messageContainer') messageContainer!: ElementRef; // Add ViewChild to access the message container
   messages: Message[] = [];
   channelId: number = 0;
-  loggedInUserId: number = parseInt(
-    sessionStorage.getItem('userId') || '0',
-    10
-  );
-  newMessageText: string = ''; // Variable to hold the new message text
+  currentUserId: number = parseInt(sessionStorage.getItem('userId') || '0', 10);
+  newMessage: string = ''; // Variable to hold the new message text
   private pollingInterval: any = null; // Reference for the polling interval
+
+  private shouldScrollToBottom = false; // Flag to determine if we need to scroll
 
   constructor(
     private route: ActivatedRoute,
@@ -35,12 +44,21 @@ export class ChatChannelComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngAfterViewChecked(): void {
+    // Scroll to bottom if flagged
+    if (this.shouldScrollToBottom) {
+      this.scrollToBottom();
+      this.shouldScrollToBottom = false; // Reset the flag
+    }
+  }
+
   loadMessages(): void {
     this.messageService.getMessagesForChannel(this.channelId).subscribe({
       next: (response: any) => {
         console.log('Received messages:', response);
         // Extract the 'data' array from the response object
         this.messages = response.data || [];
+        this.shouldScrollToBottom = true; // Flag to scroll to bottom after loading
       },
       error: (error) => {
         console.error('Error loading messages:', error);
@@ -51,12 +69,12 @@ export class ChatChannelComponent implements OnInit, OnDestroy {
 
   // Send a new message to the current channel
   sendMessage(): void {
-    if (this.newMessageText.trim()) {
+    if (this.newMessage.trim()) {
       const newMessage: Message = {
-        senderId: this.loggedInUserId, // Use the logged-in user ID
+        senderId: this.currentUserId, // Use the logged-in user ID
         receiverId: null, // Channels don't use receiverId
         channelId: this.channelId, // Use the current channel ID
-        messageText: this.newMessageText,
+        messageText: this.newMessage,
         createdAt: new Date().toISOString(), // Current timestamp in ISO format
       };
 
@@ -65,26 +83,35 @@ export class ChatChannelComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.loadMessages(); // Reload messages after sending
-            this.newMessageText = ''; // Clear the input field
+            this.newMessage = ''; // Clear the input field
           },
           error: (error) => {
             console.error('Error sending message:', error);
           },
         });
     }
+    this.shouldScrollToBottom = true; // Set the flag to scroll after sending the message
   }
 
   // Start polling for new messages every 5 seconds
   startPolling(): void {
     this.pollingInterval = setInterval(() => {
       this.loadMessages(); // Reload messages to check for new ones
-    }, 5000); // Poll every 5 seconds
+    }, 50000);
   }
 
   // Stop polling when the component is destroyed
   ngOnDestroy(): void {
     if (this.pollingInterval) {
       clearInterval(this.pollingInterval); // Clear the interval to stop polling
+    }
+  }
+
+  // Scroll to the bottom of the message container
+  scrollToBottom(): void {
+    if (this.messageContainer) {
+      const container = this.messageContainer.nativeElement;
+      container.scrollTop = container.scrollHeight;
     }
   }
 }

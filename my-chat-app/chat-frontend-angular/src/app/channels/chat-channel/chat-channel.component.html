@@ -1,54 +1,140 @@
-<div
-  *ngFor="let message of messages"
-  [ngClass]="{ 'my-message': message.senderId === loggedInUserId }"
->
-  <p>{{ message.messageText }}</p>
-  <small>{{ message.createdAt | date : "short" }}</small>
+<div class="message-container">
+  <h2>Channel chat</h2>
+  <div class="chat-wrapper">
+    <div class="messages" #messageContainer>
+      <div
+        *ngFor="let message of messages"
+        [ngClass]="{
+          'my-message': message.senderId === currentUserId,
+          'friend-message': message.senderId !== currentUserId
+        }"
+      >
+        <div class="message-text">{{ message.messageText }}</div>
+        <div class="message-header">
+          <span class="message-time">{{
+            message.createdAt | date : "short"
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="message-input">
+      <textarea
+        [(ngModel)]="newMessage"
+        placeholder="Type your message..."
+        rows="4"
+      ></textarea>
+      <button (click)="sendMessage()">Send</button>
+    </div>
+  </div>
 </div>
 
-<input
-  [(ngModel)]="newMessageText"
-  type="text"
-  placeholder="Type a message..."
-  class="message-input"
-/>
-<button (click)="sendMessage()">Send</button>
-
 <style>
-  .my-message {
-    text-align: right;
-    background-color: lightgreen;
-    margin: 10px 0;
-    padding: 5px;
-    border-radius: 5px;
+  .message-container {
+    background-color: var(--g-purple);
+    display: flex;
+    flex-direction: column;
+    height: 700px; /* Fixed size for the chat */
+    width: 450px; /* Optional: Adjust width if necessary */
+    border: 0px;
+    border-radius: 10px;
+    overflow: hidden; /* Prevent overflowing content */
   }
 
-  div {
-    text-align: left;
-    background-color: lightgray;
-    margin: 10px 0;
-    padding: 5px;
+  .message-container h2 {
+    color: white;
+  }
+
+  .message-container .chat-wrapper {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 10px; /* Rounded edges for the entire chat */
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .messages {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between messages */
+  }
+
+  .my-message {
+    background-color: var(--g-orange);
+    align-self: flex-end; /* Align user's messages to the right */
+    padding: 10px;
     border-radius: 5px;
+    margin: 0;
+    color: white;
+    max-width: 75%; /* Optional: Adjust width for better layout */
+  }
+
+  .friend-message {
+    background-color: #c17ae8;
+    align-self: flex-start; /* Align friend's messages to the left */
+    padding: 10px;
+    border-radius: 5px;
+    margin: 0;
+    color: white;
+    max-width: 75%; /* Optional: Adjust width for better layout */
+  }
+
+  .message-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+
+  .message-time {
+    margin-top: 10px;
+    font-size: 0.8em;
+    color: var(--g-grey);
+    margin-left: auto;
+  }
+
+  .friend-message .message-time {
+    margin-top: 10px;
+    font-size: 0.8em;
+    color: var(--g-grey);
+    margin-left: 0;
+  }
+
+  .message-text {
+    font-size: 1em;
+    word-wrap: break-word;
   }
 
   .message-input {
-    width: 100%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
     padding: 10px;
-    margin-top: 10px;
+    border-top: 1px solid var(--g-grey);
+  }
+
+  textarea {
+    width: 100%;
+    padding: 0px;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    resize: none;
   }
 
   button {
     margin-top: 10px;
-    padding: 10px;
-    background-color: #4caf50;
+    padding: 8px 16px;
+    background-color: var(--g-purple);
     color: white;
     border: none;
     border-radius: 5px;
+    cursor: pointer;
+    align-self: flex-end;
   }
 
   button:hover {
-    background-color: #45a049;
+    background-color: var(--g-orange);
   }
 </style>
