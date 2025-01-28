@@ -1,0 +1,58 @@
+.channel-list-container {
+    margin-top: 20px;
+  }
+
+  .channel-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+  }
+
+  .channel-item:hover {
+    background-color: var(--g-grey);
+  }
+
+  .channel-info {
+    font-size: 14px;
+    color: var(--g-purple);
+  }
+
+  .channel-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .edit-channel-link {
+    margin-right: 10px;
+    color: var(--g-purple);
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .edit-channel-link:hover {
+    color: var(--g-orange);
+  }
+
+  .chat-button {
+    background-color: var(--g-purple);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .chat-button:hover {
+    background-color: purple;
+  }
+
+  .no-channels {
+    text-align: center;
+    color: var(--g-purple);
+    font-size: 16px;
+  }

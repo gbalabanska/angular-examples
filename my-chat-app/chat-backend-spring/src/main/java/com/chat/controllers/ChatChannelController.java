@@ -31,10 +31,10 @@ public class ChatChannelController {
     @Autowired
     private CookieExtractor cookieExtractor;
 
-    // Load all messages for a channel
     @Autowired
     private ChannelService channelService;
 
+    // Get all messages for a channel
     @GetMapping("/{channelId}/messages")
     public ResponseEntity<ApiResponse<List<MessageDTO>>> getChannelMessages(@PathVariable int channelId) {
         List<MessageDTO> messages = channelService.getMessagesWithUsername(channelId);

@@ -1,0 +1,115 @@
+.message-container {
+    background-color: var(--g-purple);
+    display: flex;
+    flex-direction: column;
+    height: 700px; 
+    width: 450px; 
+    border: 0px;
+    border-radius: 10px;
+    overflow: hidden; 
+  }
+
+  .message-container h2 {
+    color: white;
+  }
+
+  .message-container .chat-wrapper {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 10px; 
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .messages {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+  }
+
+  .my-message {
+    background-color: var(--g-orange);
+    align-self: flex-end;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 0;
+    color: white;
+    max-width: 75%;
+  }
+
+  .friend-message {
+    background-color: #c17ae8;
+    align-self: flex-start; 
+    padding: 10px;
+    border-radius: 5px;
+    margin: 0;
+    color: white;
+    max-width: 75%; 
+  }
+
+  .message-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+
+  .message-time {
+    margin-top: 10px;
+    font-size: 0.8em;
+    color: var(--g-grey);
+    margin-left: auto;
+  }
+
+  .friend-message .message-time {
+    margin-top: 10px;
+    font-size: 0.8em;
+    color: var(--g-grey);
+    margin-left: 0;
+  }
+
+  .message-text {
+    font-size: 1em;
+    word-wrap: break-word;
+  }
+
+  .sender-username {
+    font-weight: bold;
+    color: #3f51b5; 
+    background-color: #e8eaf6; 
+    padding: 3px 6px;
+    border-radius: 5px;
+  }
+
+  .message-input {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-top: 1px solid var(--g-grey);
+  }
+
+  textarea {
+    width: 100%;
+    padding: 0px;
+    border-radius: 5px;
+    resize: none;
+  }
+
+  button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: var(--g-purple);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: flex-end;
+  }
+
+  button:hover {
+    background-color: var(--g-orange);
+  }
