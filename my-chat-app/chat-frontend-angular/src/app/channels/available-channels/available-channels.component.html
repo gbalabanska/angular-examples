@@ -1,23 +1,93 @@
 <div *ngIf="channels && channels.length > 0; else noChannels">
-  <ul>
-    <li *ngFor="let channel of channels">
-      <span>{{ channel.channelId }} / {{ channel.channelName }}</span>
-      <a
-        [routerLink]="['/editChannel']"
-        [queryParams]="{ id: channel.channelId, name: channel.channelName }"
+  <div class="channel-list-container">
+    <div *ngFor="let channel of channels" class="channel-item">
+      <span class="channel-info"
+        >{{ channel.channelId }} / {{ channel.channelName }}</span
       >
-        Edit Channel
-      </a>
-      <button
-        [routerLink]="['/chatChannel']"
-        [queryParams]="{ id: channel.channelId }"
-      >
-        Chat
-      </button>
-    </li>
-  </ul>
+      <div class="channel-actions">
+        <a
+          [routerLink]="['/editChannel']"
+          [queryParams]="{ id: channel.channelId, name: channel.channelName }"
+          class="edit-channel-link"
+        >
+          Edit
+        </a>
+        <button
+          [routerLink]="['/chatChannel']"
+          [queryParams]="{ id: channel.channelId }"
+          class="chat-button"
+        >
+          Chat
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <ng-template #noChannels>
   <p>No channels available.</p>
 </ng-template>
+<style>
+  /* Styling for the entire channel-list container */
+  .channel-list-container {
+    margin-top: 20px;
+  }
+
+  /* Styling for each channel item */
+  .channel-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+  }
+
+  .channel-item:hover {
+    background-color: var(--g-grey);
+  }
+
+  .channel-info {
+    font-size: 14px;
+    color: var(--g-purple);
+  }
+
+  /* Styling for the channel actions (Edit and Chat buttons) */
+  .channel-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .edit-channel-link {
+    margin-right: 10px;
+    color: var(--g-purple);
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .edit-channel-link:hover {
+    color: var(--g-orange);
+  }
+
+  .chat-button {
+    background-color: var(--g-orange);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .chat-button:hover {
+    background-color: darkorange;
+  }
+
+  /* Styling when no channels are available */
+  .no-channels {
+    text-align: center;
+    color: var(--g-purple);
+    font-size: 16px;
+  }
+</style>

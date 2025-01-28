@@ -1,42 +1,119 @@
-<div>
-  <!-- Search Section -->
-  <div>
+<div
+  style="
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+    border: 2px solid var(--g-purple);
+    border-radius: 10px;
+  "
+>
+  <h2 style="margin: 0 0 10px; font-size: 1.1em">Add Friends</h2>
+  <div
+    style="
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      font-size: 0.8em;
+    "
+  >
     <input
       type="text"
       [(ngModel)]="searchQuery"
       placeholder="Search for a friend"
+      style="
+        padding: 6px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1em;
+        flex-grow: 1;
+      "
     />
-    <button (click)="searchUsers()" [disabled]="!searchQuery.trim()">
+    <button
+      (click)="searchUsers()"
+      [disabled]="!searchQuery.trim()"
+      style="
+        padding: 6px 12px;
+        background-color: var(--g-purple);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1em;
+        cursor: pointer;
+      "
+    >
       Search
     </button>
   </div>
 
   <!-- Display Found User -->
-  <div>
-    <h3>Found User:</h3>
-    <div *ngIf="foundUser">
-      <p><strong>Username:</strong> {{ foundUser.username }}</p>
-      <!-- Add more user details as needed -->
-      <button (click)="addToFriendList(foundUser.id)">Add to Friendlist</button>
+  <div style="margin-bottom: 15px; font-size: 1em">
+    <h3 style="margin-bottom: 8px; font-size: 1em">Found User:</h3>
+    <div
+      *ngIf="foundUser"
+      style="padding: 8px; border: 1px solid #ccc; border-radius: 5px"
+    >
+      <p style="margin: 0 0 8px; font-size: 0.8em">
+        <strong>Username:</strong> {{ foundUser.username }}
+      </p>
+      <button
+        (click)="addToFriendList(foundUser.id)"
+        style="
+          padding: 6px 12px;
+          background-color: var(--g-orange);
+          color: white;
+          border: none;
+          border-radius: 5px;
+          font-size: 0.8em;
+          cursor: pointer;
+        "
+      >
+        Add to Friendlist
+      </button>
     </div>
   </div>
 
   <!-- Show All Users -->
-  <h3>All Users</h3>
-  <ul>
-    <li
-      *ngFor="let user of users; trackBy: trackByUserId"
-      (mouseenter)="isHoveredUserId = user.id"
-      (mouseleave)="isHoveredUserId = null"
-    >
-      <span>{{ user.username }}</span>
-      <!-- Add button next to user if the user is hovered -->
-      <button
-        *ngIf="isHoveredUserId === user.id"
-        (click)="addToFriendList(user.id)"
+  <h3 style="margin-bottom: 8px; font-size: 1em">All Users</h3>
+  <div
+    style="
+      max-height: 150px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 8px;
+    "
+  >
+    <ul style="list-style-type: none; padding: 0; margin: 0; font-size: 0.8em">
+      <li
+        *ngFor="let user of users; trackBy: trackByUserId"
+        (mouseenter)="isHoveredUserId = user.id"
+        (mouseleave)="isHoveredUserId = null"
+        style="
+          padding: 6px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid #eee;
+        "
       >
-        Add to Friendlist
-      </button>
-    </li>
-  </ul>
+        <span>{{ user.username }}</span>
+        <button
+          *ngIf="isHoveredUserId === user.id"
+          (click)="addToFriendList(user.id)"
+          style="
+            padding: 4px 8px;
+            background-color: var(--g-purple);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+          "
+        >
+          Add to Friendlist
+        </button>
+      </li>
+    </ul>
+  </div>
 </div>

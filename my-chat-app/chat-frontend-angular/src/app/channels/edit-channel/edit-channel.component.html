@@ -1,62 +1,201 @@
-<div *ngIf="channelId && channelName">
-  <div>
-    <h1>Editing Channel: ID:{{ channelId }} / {{ channelName }}</h1>
-    <button (click)="changeChannelName()">Change Channel Name</button>
-    <button (click)="deleteChannel()">Delete Channel</button>
+<div
+  style="background-color: var(--g-purple); border-radius: 10px"
+  *ngIf="channelId && channelName"
+>
+  <div class="channel-header">
+    <h1 style="margin: 15px">Channel: ID/ {{ channelId }} {{ channelName }}</h1>
+    <button (click)="changeChannelName()" class="action-button">
+      Change Channel Name
+    </button>
+    <button (click)="deleteChannel()" class="action-button delete-button">
+      Delete Channel
+    </button>
   </div>
-
-  <div class="friend-list">
-    <h3>Friends</h3>
-    <div *ngFor="let friend of friendList">
-      <div class="friend-item">
-        <span>{{ friend.friendId }} / {{ friend.friendUsername }}</span>
-        <button
-          (click)="addFriendToChannel(friend.friendId)"
-          class="add-friend-btn"
-        >
-          Add Friend to Channel
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div *ngIf="users$ | async as response">
-    <div class="user-section">
-      <h3>Owner</h3>
-      <div *ngFor="let user of response.data">
-        <div *ngIf="user.userRole === 'OWNER'">
-          <p>
-            <strong>{{ user.userId }} / {{ user.username }}</strong>
-          </p>
+  <div style="background-color: white; border-radius: 10px; padding: 10px">
+    <div class="friend-list-container">
+      <h3>Add Friends to Channel</h3>
+      <div class="friend-list-box">
+        <div *ngFor="let friend of friendList" class="friend-item">
+          <span>{{ friend.friendId }} / {{ friend.friendUsername }}</span>
+          <button
+            (click)="addFriendToChannel(friend.friendId)"
+            class="add-friend-btn"
+          >
+            Add Friend to Channel
+          </button>
         </div>
       </div>
     </div>
 
-    <div class="user-section">
-      <h3>Admins</h3>
-      <div *ngFor="let user of response.data">
-        <div *ngIf="user.userRole === 'ADMIN'">
-          <p>
-            <strong>{{ user.userId }} / {{ user.username }}</strong>
-            <button (click)="removeUser(user.userId)">Remove</button>
-          </p>
+    <h3>Channel Users</h3>
+    <div class="friend-list-box" *ngIf="users$ | async as response">
+      <div class="user-section">
+        <h3>Owner</h3>
+        <div *ngFor="let user of response.data">
+          <div *ngIf="user.userRole === 'OWNER'">
+            <p class="friend-item">
+              <span>{{ user.userId }} / {{ user.username }}</span>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="user-section">
-      <h3>Members</h3>
-      <div *ngFor="let user of response.data">
-        <div *ngIf="user.userRole === 'MEMBER'">
-          <p>
-            <strong>{{ user.userId }} / {{ user.username }}</strong>
-            <button (click)="promoteToAdmin(user.userId)">
-              Promote to Admin
-            </button>
-            <button (click)="removeUser(user.userId)">Remove</button>
-          </p>
+      <div class="user-section">
+        <h3>Admins</h3>
+        <div *ngFor="let user of response.data">
+          <div *ngIf="user.userRole === 'ADMIN'">
+            <p class="friend-item">
+              <span>{{ user.userId }} / {{ user.username }}</span>
+              <button (click)="removeUser(user.userId)" class="remove-user-btn">
+                Remove
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="user-section">
+        <h3>Members</h3>
+        <div *ngFor="let user of response.data">
+          <div *ngIf="user.userRole === 'MEMBER'">
+            <p class="friend-item">
+              <span>{{ user.userId }} / {{ user.username }}</span>
+              <span>
+                <button
+                  (click)="promoteToAdmin(user.userId)"
+                  class="promote-btn"
+                >
+                  Promote to Admin
+                </button>
+                <button
+                  (click)="removeUser(user.userId)"
+                  class="remove-user-btn"
+                >
+                  Remove
+                </button></span
+              >
+            </p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+<style>
+  /* Styling for the channel header */
+  .channel-header {
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .action-button {
+    background-color: var(--g-orange);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+
+  .action-button:hover {
+    background-color: darkorange;
+  }
+
+  .delete-button {
+    background-color: #e74c3c;
+  }
+
+  .delete-button:hover {
+    background-color: #c0392b;
+  }
+
+  /* Styling for the friend list container */
+  .friend-list-container {
+    margin-top: 20px;
+  }
+
+  /* Styling for the scrollable friend list box */
+  .friend-list-box {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid var(--g-purple);
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .friend-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+  }
+
+  .friend-item:hover {
+    background-color: var(--g-grey);
+  }
+
+  .add-friend-btn {
+    background-color: var(--g-orange);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .add-friend-btn:hover {
+    background-color: darkorange;
+  }
+
+  /* Styling for each user section */
+  .user-section {
+    margin-top: 20px;
+  }
+
+  .user-section h3 {
+    color: var(--g-purple);
+    margin-bottom: 10px;
+  }
+
+  /* Styling for user roles (Owner, Admin, Member) */
+  .user-section p {
+    font-size: 14px;
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .promote-btn,
+  .remove-user-btn {
+    background-color: var(--g-purple);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+
+  .promote-btn:hover {
+    background-color: darkviolet;
+  }
+
+  .remove-user-btn {
+    background-color: #e74c3c;
+  }
+
+  .remove-user-btn:hover {
+    background-color: #c0392b;
+  }
+
+  .remove-user-btn,
+  .promote-btn {
+    margin-left: 10px;
+  }
+</style>

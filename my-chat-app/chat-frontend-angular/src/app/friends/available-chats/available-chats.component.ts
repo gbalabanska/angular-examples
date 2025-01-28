@@ -32,7 +32,9 @@ export class AvailableChatsComponent implements OnInit {
     });
   }
 
-  goToChat(friendId: number): void {
-    this.router.navigate(['/chat', friendId]);
+  goToChat(friendId: number, friendUsername: string): void {
+    this.router.navigate(['/chat', friendId], {
+      queryParams: { friendUsername },
+    });
   }
 }

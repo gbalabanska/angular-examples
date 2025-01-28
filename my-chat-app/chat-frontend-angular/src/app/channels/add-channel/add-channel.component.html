@@ -1,9 +1,40 @@
-<div>
-  <h2>Create Channel</h2>
+<div
+  style="
+    background-color: var(--g-purple);
+    border-radius: 10px;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    width: 265px;
+    margin: 0 auto;
+  "
+>
+  <h2 style="margin: 0 0 10px; font-size: 1.1em">Create Channel</h2>
   <input
     type="text"
     [(ngModel)]="channelName"
     placeholder="Enter channel name"
+    style="
+      width: calc(100% - 30px);
+      padding: 5px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 0.8em;
+    "
   />
-  <button (click)="createChannel()">CREATE</button>
+  <button
+    (click)="createChannel()"
+    style="
+      background-color: var(--g-orange);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 0.8em;
+      cursor: pointer;
+    "
+  >
+    CREATE
+  </button>
 </div>

@@ -27,6 +27,7 @@ export class MessagePageComponent
   friendId!: number;
   currentUserId: number | null = null;
   private pollingInterval: any = null; // Store the interval reference for checking for updates
+  friendUsername: string = ''; // Add this to store the friend's username
 
   @ViewChild('messageContainer') private messageContainer!: ElementRef;
 
@@ -40,16 +41,19 @@ export class MessagePageComponent
   ngOnInit(): void {
     const friendId = this.route.snapshot.paramMap.get('friendId');
     if (friendId) {
-      this.friendId = +friendId; // Retrieve the friendId from the route parameters
-      this.loadMessages(this.friendId); // Load messages between the current user and the friend
+      this.friendId = +friendId;
+      this.loadMessages(this.friendId);
     }
 
-    // Retrieve the current user ID from sessionStorage
+    // Get friend's username from queryParams
+    this.route.queryParams.subscribe((params) => {
+      this.friendUsername = params['friendUsername'] || '';
+    });
+
     this.currentUserId = sessionStorage.getItem('userId')
       ? +sessionStorage.getItem('userId')!
       : null;
 
-    // Start polling for new messages every 5 seconds
     this.startPolling();
   }
 

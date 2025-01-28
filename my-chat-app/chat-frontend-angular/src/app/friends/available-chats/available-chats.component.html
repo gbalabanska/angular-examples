@@ -1,26 +1,67 @@
 <div class="friend-list-container">
-  <table class="friend-list-table">
-    <table>
-      <thead>
-        <tr>
-          <th>Friend ID</th>
-          <th>Username</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let friend of friendList"
-          (click)="goToChat(friend.friendId)"
-          style="cursor: pointer"
-        >
-          <td>{{ friend.friendId }}</td>
-          <td>{{ friend.friendUsername }}</td>
-          <td>
-            <button class="chat-button">Start Chat</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </table>
+  <div class="friend-list-header"></div>
+  <div class="friend-list-box">
+    <div
+      *ngFor="let friend of friendList"
+      class="friend-item"
+      (click)="goToChat(friend.friendId, friend.friendUsername)"
+    >
+      <span class="friend-info"
+        >{{ friend.friendId }} / {{ friend.friendUsername }}</span
+      >
+      <button class="chat-button">Start Chat</button>
+    </div>
+  </div>
 </div>
+
+<style>
+  /* Styling for the entire friend-list container */
+  .friend-list-container {
+    margin-top: 10px;
+  }
+
+  .friend-list-header h3 {
+    color: var(--g-purple);
+    margin-bottom: 10px;
+  }
+
+  /* Styling for the friend list box */
+  .friend-list-box {
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Styling for each friend item */
+  .friend-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+  }
+
+  .friend-item:hover {
+    background-color: var(--g-grey);
+  }
+
+  .friend-info {
+    font-size: 14px;
+    color: var(--g-purple);
+  }
+
+  /* Styling for the chat button */
+  .chat-button {
+    background-color: var(--g-orange);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .chat-button:hover {
+    background-color: darkorange;
+  }
+</style>
