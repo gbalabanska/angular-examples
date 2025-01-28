@@ -2,7 +2,7 @@
   <div class="channel-list-container">
     <div *ngFor="let channel of channels" class="channel-item">
       <span class="channel-info"
-        >{{ channel.channelId }} / {{ channel.channelName }}</span
+        >🆔 {{ channel.channelId }} / {{ channel.channelName }}</span
       >
       <div class="channel-actions">
         <a
@@ -10,14 +10,14 @@
           [queryParams]="{ id: channel.channelId, name: channel.channelName }"
           class="edit-channel-link"
         >
-          Edit
+          Edit 📝
         </a>
         <button
           [routerLink]="['/chatChannel']"
-          [queryParams]="{ id: channel.channelId }"
+          [queryParams]="{ id: channel.channelId, name: channel.channelName }"
           class="chat-button"
         >
-          Chat
+          Chat ✉️
         </button>
       </div>
     </div>
@@ -72,7 +72,7 @@
   }
 
   .chat-button {
-    background-color: var(--g-orange);
+    background-color: var(--g-purple);
     color: white;
     border: none;
     padding: 8px 16px;
@@ -81,7 +81,7 @@
   }
 
   .chat-button:hover {
-    background-color: darkorange;
+    background-color: purple;
   }
 
   /* Styling when no channels are available */

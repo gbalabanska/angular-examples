@@ -2,20 +2,20 @@ package com.chat.services;
 
 import com.chat.dto.response.AvailableChannel;
 import com.chat.dto.response.ChannelUserEdit;
+import com.chat.dto.response.MessageDTO;
 import com.chat.entities.Channel;
 import com.chat.entities.ChannelUser;
+import com.chat.entities.Message;
 import com.chat.entities.User;
 import com.chat.errors.*;
-import com.chat.repositories.ChannelRepository;
-import com.chat.repositories.ChannelUserRepository;
-import com.chat.repositories.UserFriendRepository;
-import com.chat.repositories.UserRepository;
+import com.chat.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ChannelService {
@@ -239,6 +239,30 @@ public class ChannelService {
         userToRemove.setUserRemoved(true);
         channelUserRepository.save(userToRemove);
 
+    }
+
+    @Autowired
+    private MessageRepository messageRepository;
+    public List<MessageDTO> getMessagesWithUsername(int channelId) {
+        List<Message> messages = messageRepository.findByChannelId(channelId);
+
+        return messages.stream().map(message -> {
+            // Fetch the sender's username from the User repository
+            String senderUsername = userRepository.findById(message.getSenderId())
+                    .map(user -> user.getUsername())
+                    .orElse(null); // Default if no user is found
+
+            // Create and return a MessageDTO with sender's username and message details
+            return new MessageDTO(
+                    message.getId(),
+                    message.getSenderId(),
+                    senderUsername,
+                    message.getReceiverId(),
+                    message.getChannelId(),
+                    message.getMessageText(),
+                    message.getCreatedAt()
+            );
+        }).collect(Collectors.toList());
     }
 
 

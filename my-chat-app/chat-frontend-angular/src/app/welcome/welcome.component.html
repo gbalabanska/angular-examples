@@ -4,7 +4,7 @@
     <div class="chat-header">
       <h1>🎉 Welcome to the Application</h1>
       <div *ngIf="username && userId" class="user-info">
-        <p>👤 {{ username }} (ID: {{ userId }})</p>
+        <p>👋{{ username }} (🆔: {{ userId }})</p>
         <app-logout class="logout-button"></app-logout>
       </div>
     </div>
@@ -17,11 +17,11 @@
       <!-- Contacts Section -->
       <div class="contacts-container">
         <div class="contact-section">
-          <h3>Friends</h3>
+          <h3>👤 Friends</h3>
           <app-available-chats></app-available-chats>
         </div>
         <div class="contact-section">
-          <h3>Channels</h3>
+          <h3>📱 Channels</h3>
           <app-available-channels></app-available-channels>
         </div>
       </div>
@@ -44,7 +44,7 @@
   .chat-header {
     background-color: var(--g-purple);
     color: white;
-    padding: 20px;
+    padding: 10px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 0;
@@ -64,7 +64,7 @@
   }
 
   .user-info p {
-    font-size: 14px;
+    font-size: 18px;
     color: #ddd;
   }
 

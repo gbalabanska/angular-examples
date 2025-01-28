@@ -1,10 +1,12 @@
 package com.chat.controllers;
 
+import com.chat.dto.response.MessageDTO;
 import com.chat.entities.Message;
 import com.chat.entities.ChannelUser;
 import com.chat.reponse.ApiResponse;
 import com.chat.repositories.ChannelUserRepository;
 import com.chat.repositories.MessageRepository;
+import com.chat.services.ChannelService;
 import com.chat.util.CookieExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,18 +32,18 @@ public class ChatChannelController {
     private CookieExtractor cookieExtractor;
 
     // Load all messages for a channel
-    @GetMapping("/{channelId}/messages")
-    public ResponseEntity<ApiResponse<List<Message>>> getChannelMessages(@PathVariable int channelId, HttpServletRequest request) {
-        int userId = cookieExtractor.extractUserId(request); // Get user ID from the request
-        Optional<ChannelUser> channelUser = channelUserRepository.findActiveChannelUserByChannelAndUser(channelId, userId);
+    @Autowired
+    private ChannelService channelService;
 
-        // Check if the user is not a member or has been removed from the channel
-        if (channelUser.isEmpty() || channelUser.get().isUserRemoved()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ApiResponse<>(null, "User is not authorized to access this channel."));
+    @GetMapping("/{channelId}/messages")
+    public ResponseEntity<ApiResponse<List<MessageDTO>>> getChannelMessages(@PathVariable int channelId) {
+        List<MessageDTO> messages = channelService.getMessagesWithUsername(channelId);
+
+        if (messages.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>(null, "No messages found in this channel."));
         }
 
-        List<Message> messages = messageRepository.findByChannelId(channelId);
         return ResponseEntity.ok(new ApiResponse<>(messages, "Messages retrieved successfully."));
     }
 

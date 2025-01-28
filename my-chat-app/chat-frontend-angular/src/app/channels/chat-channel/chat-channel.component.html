@@ -1,5 +1,5 @@
 <div class="message-container">
-  <h2 style="text-align: center">Channel chat</h2>
+  <h2 style="text-align: center">🌟 {{ channelName }} Chat</h2>
   <div class="chat-wrapper">
     <div class="messages" #messageContainer>
       <div
@@ -9,7 +9,11 @@
           'friend-message': message.senderId !== currentUserId
         }"
       >
+        <div style="margin-bottom: 5px" class="message-text">
+          <span class="sender-username">{{ message.senderUsername }}:</span>
+        </div>
         <div class="message-text">{{ message.messageText }}</div>
+
         <div class="message-header">
           <span class="message-time">{{
             message.createdAt | date : "short"
@@ -24,7 +28,7 @@
         placeholder="Type your message..."
         rows="4"
       ></textarea>
-      <button (click)="sendMessage()">Send</button>
+      <button (click)="sendMessage()">Send 📩</button>
     </div>
   </div>
 </div>
@@ -106,6 +110,14 @@
   .message-text {
     font-size: 1em;
     word-wrap: break-word;
+  }
+
+  .sender-username {
+    font-weight: bold;
+    color: #3f51b5; /* Blue color for sender's name */
+    background-color: #e8eaf6; /* Light background to highlight */
+    padding: 3px 6px;
+    border-radius: 5px;
   }
 
   .message-input {

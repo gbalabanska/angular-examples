@@ -7,10 +7,11 @@ import {
   AfterViewChecked,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Message } from '../../../models/entity/entities.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from '../../services/messages.service';
+import { MessageDTO } from '../../../models/reponse/api-response.model';
+import { Message } from '../../../models/entity/entities.model';
 
 @Component({
   selector: 'app-chat-channel',
@@ -23,10 +24,11 @@ export class ChatChannelComponent
   implements OnInit, OnDestroy, AfterViewChecked
 {
   @ViewChild('messageContainer') messageContainer!: ElementRef; // Add ViewChild to access the message container
-  messages: Message[] = [];
+  messages: MessageDTO[] = [];
   channelId: number = 0;
   currentUserId: number = parseInt(sessionStorage.getItem('userId') || '0', 10);
   newMessage: string = ''; // Variable to hold the new message text
+  channelName: string = ''; // Variable to store the channel name
   private pollingInterval: any = null; // Reference for the polling interval
 
   private shouldScrollToBottom = false; // Flag to determine if we need to scroll
@@ -39,6 +41,7 @@ export class ChatChannelComponent
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       this.channelId = params['id'];
+      this.channelName = params['name']; // Get channel name from queryParams
       this.loadMessages();
       this.startPolling(); // Start polling when the component initializes
     });
